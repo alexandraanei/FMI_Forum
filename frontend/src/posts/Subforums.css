@@ -1,0 +1,13 @@
+.root {
+    width: 100%;
+}
+
+.heading {
+    font-size: 15px;
+    font-weight: regular;
+}
+
+.listRoot {
+    width: 100%;
+    background-color: #fff;
+}
