@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu,
+    Drawer, List, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
 import LoginStore from './stores/LoginStore';
 
 const useStyles = makeStyles(theme => ({
@@ -63,11 +65,17 @@ const useStyles = makeStyles(theme => ({
             display: 'flex',
         },
     },
+    list: {
+        width: 250,
+    },
 }));
+
+
 
 export default function PrimarySearchAppBar() {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [sidebar, setSidebar] = React.useState(false);
     const isMenuOpen = Boolean(anchorEl);
 
     const handleProfileMenuOpen = (event: any) => {
@@ -78,7 +86,53 @@ export default function PrimarySearchAppBar() {
         setAnchorEl(null);
     };
 
+    // const { sidebar } = ForumStore;
+
+    const toggleDrawer = (open: boolean) => ( event: React.KeyboardEvent | React.MouseEvent ) => {
+        console.log('toggle', open, sidebar);
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+  
+      setSidebar(open);
+    };
+
     const menuId = 'primary-search-account-menu';
+
+    const renderSidebar = (
+        <div>
+      <Drawer anchor={'left'} open={sidebar} onClose={toggleDrawer(false)}>
+        <div
+            className={classes.list}
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+          >
+            <List>
+             {['Online1', 'Online2'].map((text, index) => (
+                <ListItem button key={text}>
+                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                </ListItem>
+            ))}
+            </List>
+            <List>
+             {['Online1', 'Online2'].map((text, index) => (
+                <ListItem button key={text}>
+                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                </ListItem>
+            ))}
+            </List>
+            <Divider />
+        </div>
+        </Drawer>
+    </div>
+    )
     const renderMenu = (
         <Menu
           anchorEl={anchorEl}
@@ -123,6 +177,7 @@ export default function PrimarySearchAppBar() {
                         className={classes.menuButton}
                         color="inherit"
                         aria-label="open drawer"
+                        onClick={toggleDrawer(true)}
                     >
                         <MenuIcon />
                     </IconButton>
@@ -168,6 +223,7 @@ export default function PrimarySearchAppBar() {
                 </Toolbar>
             </AppBar>
             {renderMenu}
+            {renderSidebar}
         </div>
     );
 }

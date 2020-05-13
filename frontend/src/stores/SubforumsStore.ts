@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx';
 
 export class SubforumsStore {
+
   @observable
   active: boolean = true;
 
@@ -14,7 +15,7 @@ export class SubforumsStore {
   }
 
   @action
-  resetSubforum(){
+  resetSubforum() {
     this.active = false;
     this.activeSubforum = '';
   }
