@@ -3,9 +3,10 @@ const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
     createdAt: Date,
-    threadId: mongoose.ObjectId,
+    threadId: { type: Schema.Types.ObjectId, ref: 'Thread' },
     content: String,
-    userId: mongoose.ObjectId
+    photo: { type: String, required: false },
+    userId: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
 const Post = mongoose.model('Post', PostSchema);

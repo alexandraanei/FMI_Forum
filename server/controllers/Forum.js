@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/category/:id', async (req, res) => {
-    const forums = await Forum.find({categoryId: req.params.id});
+    const forums = await Forum.find({ categoryId: req.params.id });
     res.send(forums);
 })
 

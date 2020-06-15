@@ -13,6 +13,7 @@ mongoose.connect(config.mongoUri, {
 mongoose.connection.on('connected', () => console.log('Connected to MongoDB'));
 
 const app = express();
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -21,6 +22,7 @@ app.use('/api/category', require("./controllers/Category"));
 app.use('/api/forum', require("./controllers/Forum"));
 app.use('/api/thread', require("./controllers/Thread"));
 app.use('/api/post', require("./controllers/Post"));
+app.use('/api/profile', require("./controllers/Profile"));
 
 const PORT = 5005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

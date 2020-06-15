@@ -3,7 +3,7 @@ const router = express.Router();
 const Thread = require('../models/Thread');
 
 router.post('/create', async (req, res) => {
-   const {title, content, userId, forumId} = req.body;
+   const { title, content, userId, forumId } = req.body;
    const newThread = Thread({
        title,
        content,
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/forum/:id', async (req, res) => {
-    const threads = await Thread.find({forumId: req.params.id});
+    const threads = await Thread.find({ forumId: req.params.id });
     res.send(threads);
 })
 

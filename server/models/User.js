@@ -3,10 +3,17 @@ const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    name: String,
+    firstName: String,
+    lastName: String,
+    username: String,
     email: String,
     password: String,
-    createdAt: Date
+    avatar: { type: String, required: false },
+    createdAt: Date,
+    type: 'admin' | 'mod' | 'user',
+    subscribedCategories: { type: [Schema.Types.ObjectId], ref: 'Category',  required: false },
+    subscribedForums: { type: [Schema.Types.ObjectId], ref: 'Forum',  required: false },
+    subscribedThreads: { type: [Schema.Types.ObjectId], ref: 'Threads',  required: false },
 });
 
 UserSchema.pre('save', async function(next) {
