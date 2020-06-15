@@ -1,0 +1,6 @@
+.category .button, .user .button {
+    opacity: 0;
+}
+.category:hover .button, .user:hover .button {
+    opacity: 1;
+}
