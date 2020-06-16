@@ -1,20 +1,16 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { List, ListItemText, ListItem, ListItemAvatar, Avatar, Divider, Button, TextField } from "@material-ui/core";
+import { List,  Divider, Button } from "@material-ui/core";
 import UserItem from './UserItem';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CreateIcon from '@material-ui/icons/Create';
+import CategoryItem from './CategoryItem';
 import AddIcon from '@material-ui/icons/Add';
-import classes from './AdminPanel.module.scss';
 
 export default function AdminPanel() {
     const history = useHistory();
-
     const [users, setUsers] = useState([]);
     const [categories, setCategories] = useState([]);
     const [postApproval, setPostApproval] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         getUsers();
@@ -30,12 +26,6 @@ export default function AdminPanel() {
         const response = await axios.get('/api/category');
         setCategories(response.data);
     };
-    
-    const handleDeleteCategory = id => {
-        axios.delete(`/api/category/${id}`);
-        history.push('/admin');
-    }
-
 
     return (
         <div style={{ padding: "2rem" }}>
@@ -47,6 +37,7 @@ export default function AdminPanel() {
                     <List>
                         {users.map((user, index) => (
                             <UserItem
+                                key={index}
                                 user={user}
                                 index={index}
                             />
@@ -68,32 +59,11 @@ export default function AdminPanel() {
             </Button> 
             <List>
                 {categories.map((category, index) => (
-                    <ListItem 
+                    <CategoryItem
                         key={index}
-                        className={classes.category}
-                        button 
-                        onClick={() => history.push(`/category/${category._id}`)}
-                    >
-                        <ListItemText primary={`${category.title}`} />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            style={{ marginRight: 4 }}
-                            startIcon={<CreateIcon />}
-                        >
-                            Redenumeste
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            className={classes.button}
-                            startIcon={<DeleteIcon />}
-                            onClick={e => {e.preventDefault(); e.stopPropagation(); handleDeleteCategory(category._id); }}
-                        >
-                            Sterge
-                        </Button>
-                    </ListItem>
+                        category={category}
+                        index={index}
+                    />
                 ))}
             </List>
             <Divider style={{ margin: "2rem 0" }}/>

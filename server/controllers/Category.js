@@ -25,6 +25,18 @@ router.get('/:id', async (req, res) => {
    res.send(cat);
 });
 
+router.put('/:id/edit', async (req, res) => {
+    Category.findById(req.params.id)
+    .then(category => {
+        category.title = req.body.name;
+  
+        category.save()
+          .then(() => res.json('Category updated!'))
+          .catch(err => res.status(400).json('Error: ' + err));
+      })
+      .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.delete('/:id', (req, res) => {
     Category.findByIdAndDelete(req.params.id)
     .then(() => res.json('Category deleted.'))
