@@ -18,6 +18,7 @@ import ShowThread from "./Pages/Thread/ShowThread";
 import ShowProfile from "./Pages/Profile/ShowProfile";
 import EditProfile from "./Pages/Profile/EditProfile";
 import AdminPanel from "./Pages/AdminPage/AdminPanel";
+import SettingsPage from "./Pages/Settings/SettingsPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -87,6 +88,9 @@ function App() {
                   </Route>
                   <Route path="/profile/:id">
                     {user ? <ShowProfile/> : <Redirect to="/"/>}
+                  </Route>
+                  <Route path="/settings/">
+                    {user ? <SettingsPage/> : <Redirect to="/"/>}
                   </Route>
                   <Route path="/admin">
                     {user?.type === 'admin' ? <AdminPanel/> : <Redirect to="/"/>}

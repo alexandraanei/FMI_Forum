@@ -106,6 +106,11 @@ export default function MenuAppBar() {
         history.push('/profile/' + id);
     };
 
+    const handleSettings = () => {
+        handleClose();
+        history.push('/settings');
+    };
+
     const toggleDrawer = (open) => (event) => {
       if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
         return;
@@ -211,7 +216,7 @@ export default function MenuAppBar() {
                                     onClose={handleClose}
                                 >
                                     <MenuItem onClick={handleProfile} >Profil</MenuItem>
-                                    <MenuItem>Setari</MenuItem>
+                                    <MenuItem onClick={handleSettings} >Setari</MenuItem>
                                     <MenuItem onClick={logout}>Logout</MenuItem>
                                 </Menu>
                             </div>
