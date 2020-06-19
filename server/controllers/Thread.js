@@ -31,6 +31,24 @@ router.get('/:id', async (req, res) => {
 router.get('/forum/:id', async (req, res) => {
     const threads = await Thread.find({ forumId: req.params.id });
     res.send(threads);
-})
+});
+
+router.put('/:id/edit', async (req, res) => {
+    Thread.findById(req.params.id)
+    .then(thread => {
+        thread.title = req.body.title;
+  
+        thread.save()
+          .then(() => res.json('Thread updated!'))
+          .catch(err => res.status(400).json('Error: ' + err));
+      })
+      .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.delete('/:id', (req, res) => {
+    Thread.findByIdAndDelete(req.params.id)
+    .then(() => res.json('Thread deleted.'))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
 
 module.exports = router;

@@ -27,8 +27,8 @@ export default function AdminPanel(props) {
 
   const handleEditRole = async (id) => {
     setIsEditing(false);
-    setUserRole(userRole.charAt(0).toLowerCase() + user.type.slice(1));
-    if (userRole === "mod" || "admin" || "user") {
+    setUserRole(userRole.charAt(0).toLowerCase() + userRole.slice(1));
+    if (userRole === "mod" || userRole === "admin" || userRole === "user") {
       user.type = userRole;
       const data = { type: userRole };
       try {
@@ -65,7 +65,6 @@ export default function AdminPanel(props) {
               defaultValue={`${
                 user.type.charAt(0).toUpperCase() + user.type.slice(1)
               }`}
-              // className={classes.textField}
               onChange={(e) => setUserRole(e.target.value)}
               helperText="Schimba rol"
             />

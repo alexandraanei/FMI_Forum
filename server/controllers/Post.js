@@ -50,12 +50,17 @@ router.post('/create', upload.single('photo'), async (req, res) => {
     });
 });
 
-
 router.get('/thread/:id', async (req, res) => {
     const page = req.query.page;
     const perPage = 10;
     const posts = await Post.find({ threadId: req.params.id }).limit(perPage).skip(perPage * (page - 1)).populate('userId');
     res.send(posts);
-})
+});
+
+router.delete('/:id', (req, res) => {
+  Post.findByIdAndDelete(req.params.id)
+  .then(() => res.json('Post deleted.'))
+  .catch(err => res.status(400).json('Error: ' + err));
+});
 
 module.exports = router;

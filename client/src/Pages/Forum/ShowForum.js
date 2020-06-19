@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios";
-import { List, ListItemText, ListItem } from "@material-ui/core";
+import { List } from "@material-ui/core";
+import ThreadItem from './ThreadItem';
 
 export default function ShowForum() {
     const history = useHistory();
@@ -31,12 +32,10 @@ export default function ShowForum() {
 
             {forum && <h1>{forum.title}</h1>}
 
-            <Button variant="contained" color="primary" onClick={() => history.push("/thread/create/"+id)}>Create Thread</Button>
+            <Button variant="contained" color="primary" onClick={() => history.push("/thread/create/" + id)}>Create Thread</Button>
             <List>
                 {threads.map((thread, index) => (
-                    <ListItem key={index} button onClick={() => history.push(`/thread/${thread._id}`)}>
-                        <ListItemText primary={thread.title} secondary={new Date(thread.createdAt).toUTCString()} />
-                    </ListItem>
+                    <ThreadItem key={index} thread={thread} index={index} />
                 ))}
             </List>
         </div>

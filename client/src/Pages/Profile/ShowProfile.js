@@ -62,7 +62,7 @@ export default function ShowProfile() {
                             <ListItemText primary={`Email: ${profile.email}`} />
                         </ListItem>
                     </List>
-                    {user._id === id && (
+                    {user?._id === id && (
                         <Button
                             type="submit"
                             variant="contained"

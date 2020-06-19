@@ -25,9 +25,9 @@ export default function CategoryItem(props) {
 
   const handleEditCategory = async (id) => {
     setIsEditing(false);
-    category.title = categoryName;
+    category.title = categoryName === "" ? category.title : categoryName;
     try {
-        await axios.put("/api/category/" + id + "/edit", { name: categoryName });
+        await axios.put("/api/category/" + id + "/edit", { name: category.title });
     } catch (err) {
         console.log(err.response.data.message);
     }
@@ -52,7 +52,6 @@ export default function CategoryItem(props) {
             <TextField
               id="margin-none"
               defaultValue={category.title}
-              // className={classes.textField}
               onChange={(e) => setCategoryName(e.target.value)}
               helperText="Schimba nume"
             />
