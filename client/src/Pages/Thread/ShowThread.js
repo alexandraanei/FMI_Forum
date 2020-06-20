@@ -112,7 +112,6 @@ export default function ShowThread() {
 
   const onChangeHandler = (e) => {
     setReplyPhoto(e.target.files[0]);
-    console.log(e.target.files[0]);
   };
 
   const handleEditThread = async (id) => {

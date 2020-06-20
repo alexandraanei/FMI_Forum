@@ -41,7 +41,6 @@ export default function AdminPanel(props) {
 
   const handleEditRoleInput = (id) => {
     setIsEditing(true);
-    console.log(isEditing);
   };
 
   return (

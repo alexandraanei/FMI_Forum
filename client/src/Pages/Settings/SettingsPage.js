@@ -35,9 +35,6 @@ export default function SettingsPage() {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(id);
-
     setPasswordError(null);
     let errors = 0;
 

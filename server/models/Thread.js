@@ -6,8 +6,7 @@ const ThreadSchema = new Schema({
     createdAt: Date,
     forumId: { type: Schema.Types.ObjectId, ref: 'Forum' },
     content: String,
-    userId: { type: Schema.Types.ObjectId, ref: 'User' }
-    
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
 const Thread = mongoose.model('Thread', ThreadSchema);

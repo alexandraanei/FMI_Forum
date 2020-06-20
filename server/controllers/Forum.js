@@ -3,7 +3,7 @@ const router = express.Router();
 const Forum = require('../models/Forum');
 
 router.post('/create', async (req, res) => {
-   const {title, categoryId} = req.body;
+   const { title, categoryId } = req.body;
    const newForum = Forum({
        title,
        createdAt: Date.now(),
@@ -47,6 +47,30 @@ router.delete('/:id', (req, res) => {
     Forum.findByIdAndDelete(req.params.id)
     .then(() => res.json('Forum deleted.'))
     .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.put('/addtopinned/:id', async (req, res) => {
+    Forum.findById(req.params.id)
+    .then(forum => {
+        forum.pinnedPosts.push(req.body.thread);
+        forum.save()
+          .then(() => res.json('Forum updated!'))
+          .catch(err => res.status(400).json('Error: ' + err.response));
+        
+    })
+    .catch(err => res.status(400).json('Error: ' + err.response));
+});
+
+router.put('/removepinned/:id', async (req, res) => {
+    Forum.findById(req.params.id)
+    .then(forum => {
+        forum.pinnedPosts.pull(req.body.thread);
+        forum.save()
+          .then(() => res.json('Forum updated!'))
+          .catch(err => res.status(400).json('Error: ' + err.response));
+        
+    })
+    .catch(err => res.status(400).json('Error: ' + err.response));
 });
 
 module.exports = router;
