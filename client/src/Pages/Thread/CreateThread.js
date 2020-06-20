@@ -11,7 +11,6 @@ const CreateForum = () => {
     const {id} = useParams();
     const history = useHistory();
     const [title, setTitle] = useState("");
-    // const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
     const [content, setContent] = useState("");
 
     const handleOnSubmit = async event => {
@@ -19,7 +18,7 @@ const CreateForum = () => {
 
         const data = {
             title,
-            content: JSON.stringify({ content }),
+            content,
             userId: user._id,
             forumId: id
         };
@@ -33,7 +32,6 @@ const CreateForum = () => {
 
     const onChangeContent = content => {
         setContent(content);
-        console.log(content);
     }
 
     return (

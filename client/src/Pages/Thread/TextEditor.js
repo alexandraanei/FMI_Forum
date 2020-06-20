@@ -1,7 +1,7 @@
 /* eslint-disable react/no-multi-comp */
 import React, { Component } from 'react';
 import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
-import { convertToRaw } from 'draft-js';
+import { stateToHTML } from 'draft-js-export-html';
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
 import {
   ItalicButton, BoldButton, UnderlineButton, CodeButton, HeadlineOneButton, HeadlineTwoButton,
@@ -65,7 +65,8 @@ export default class TextEditor extends Component {
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    this.props.onChangeContent(convertToRaw(editorState.getCurrentContent()));
+    this.props.onChangeContent(stateToHTML(editorState.getCurrentContent()));
+
   };
 
   focus = () => {

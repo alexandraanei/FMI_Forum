@@ -21,7 +21,6 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AuthContext from "../../Contexts/AuthContext";
-import { convertFromRaw, EditorState } from "draft-js";
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -198,7 +197,7 @@ export default function ShowThread() {
         </h1>
       )}
 
-      {thread && <p>{thread.content}</p>}
+      {thread && <div dangerouslySetInnerHTML={{__html: thread.content}} />}
       {posts.map((post, index) => (
         <div key={index}>
           <Card className={classes.replyRoot}>
