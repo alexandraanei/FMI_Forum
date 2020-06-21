@@ -13,7 +13,7 @@ const UserSchema = new Schema({
     type: 'admin' | 'mod' | 'user',
     subscribedCategories: { type: [Schema.Types.ObjectId], ref: 'Category',  required: false },
     subscribedForums: { type: [Schema.Types.ObjectId], ref: 'Forum',  required: false },
-    subscribedThreads: { type: [Schema.Types.ObjectId], ref: 'Threads',  required: false },
+    subscribedThreads: { type: [Schema.Types.ObjectId], ref: 'Thread',  required: false },
 });
 
 UserSchema.pre('save', async function(next) {

@@ -133,9 +133,29 @@ export default function ShowThread() {
     history.push(`/forum/${thread.forumId}`);
   };
 
-  const handleDeletePost = id => {
-    setPosts(posts.filter(post => post._id !== id));
+  const handleDeletePost = (id) => {
+    setPosts(posts.filter((post) => post._id !== id));
     axios.delete(`/api/post/${id}`);
+    history.push(`/thread/${thread._id}`);
+  };
+
+  const handleLikePost = async id => {
+    try {
+      await axios.put(`/api/post/like/${id}`, { user: user._id });
+    } catch (err) {
+      console.log(err.response);
+    }
+    
+    // console.log('like');
+    history.push(`/thread/${thread._id}`);
+  };
+
+  const handleUnlikePost = async id => {
+    try {
+      await axios.put(`/api/post/unlike/${id}`, { user: user._id });
+    } catch (err) {
+      console.log(err.response);
+    }
     history.push(`/thread/${thread._id}`);
   };
 
@@ -196,7 +216,7 @@ export default function ShowThread() {
         </h1>
       )}
 
-      {thread && <div dangerouslySetInnerHTML={{__html: thread.content}} />}
+      {thread && <div dangerouslySetInnerHTML={{ __html: thread.content }} />}
       {posts.map((post, index) => (
         <div key={index}>
           <Card className={classes.replyRoot}>
@@ -231,9 +251,21 @@ export default function ShowThread() {
               </Typography>
             </CardContent>
             <CardActions disableSpacing classes={{ root: classes.cardActions }}>
-              <IconButton aria-label="add to favorites">
+              <IconButton
+                aria-label="add to favorites"
+                color={
+                  post?.likedBy.includes(user._id) ? "secondary" : "default"
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  post?.likedBy.includes(user._id)
+                    ? handleUnlikePost(post._id)
+                    : handleLikePost(post._id);
+                }}
+              >
                 <FavoriteIcon />
               </IconButton>
+              <p>{post?.likedBy.length || ""}</p>
               {(user?.type === "admin" || user?.type === "mod") && (
                 <React.Fragment>
                   <IconButton aria-label="edit">
@@ -325,7 +357,7 @@ export default function ShowThread() {
               </span>
             </Grid>
           </Grid>
-          <Button variant="contained" type="submit" >
+          <Button variant="contained" type="submit">
             Reply
           </Button>
         </form>

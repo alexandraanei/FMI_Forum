@@ -1,66 +1,101 @@
 const express = require("express");
 const router = express.Router();
-const Post = require('../models/Post');
-const multer = require('multer');
+const Post = require("../models/Post");
+const multer = require("multer");
 
-const DIR = './uploads/comments';
+const DIR = "./uploads/comments";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, DIR);
   },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + file.originalname.toLowerCase().split(' ').join('-'));
-  }
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname.toLowerCase().split(" ").join("-"));
+  },
 });
 
 const fileFilter = (req, file, cb) => {
   // reject a file
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg"
+  ) {
     cb(null, true);
   } else {
     cb(null, false);
-    return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
   }
 };
 
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5
+    fileSize: 1024 * 1024 * 5,
   },
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
-router.post('/create', upload.single('photo'), async (req, res) => {
-    const { content, userId, threadId } = req.body;
-    const url = req.protocol + '://' + req.get('host');
-    let newPost = Post({
-        photo: req.file ? url + '/' + req.file.path : '',
-        content,
-        createdAt: Date.now(),
-        threadId,
-        userId
-    });
+router.post("/create", upload.single("photo"), async (req, res) => {
+  const { content, userId, threadId } = req.body;
+  const url = req.protocol + "://" + req.get("host");
+  let newPost = Post({
+    photo: req.file ? url + "/" + req.file.path : "",
+    content,
+    createdAt: Date.now(),
+    threadId,
+    userId,
+  });
 
-    newPost.save(function(err, post) {
-        Post.findOne(post).populate('userId').exec(function (err, post) {
-            res.send(post);
-        });
-    });
+  newPost.save(function (err, post) {
+    Post.findOne(post)
+      .populate("userId")
+      .exec(function (err, post) {
+        res.send(post);
+      });
+  });
 });
 
-router.get('/thread/:id', async (req, res) => {
-    const page = req.query.page;
-    const perPage = 10;
-    const posts = await Post.find({ threadId: req.params.id }).limit(perPage).skip(perPage * (page - 1)).populate('userId');
-    res.send(posts);
+router.get("/thread/:id", async (req, res) => {
+  const page = req.query.page;
+  const perPage = 10;
+  const posts = await Post.find({ threadId: req.params.id })
+    .limit(perPage)
+    .skip(perPage * (page - 1))
+    .populate("userId");
+  res.send(posts);
 });
 
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   Post.findByIdAndDelete(req.params.id)
-  .then(() => res.json('Post deleted.'))
-  .catch(err => res.status(400).json('Error: ' + err));
+    .then(() => res.json("Post deleted."))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.put("/like/:id", async (req, res) => {
+  Post.findById(req.params.id)
+    .then((post) => {
+      console.log(post);
+      post.likedBy.push(req.body.user);
+      console.log(post);
+      post
+        .save()
+        .then(() => res.json("post updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
+});
+
+router.put("/unlike/:id", async (req, res) => {
+  Post.findById(req.params.id)
+    .then((post) => {
+      post.likedBy.pull(req.body.user);
+      post
+        .save()
+        .then(() => res.json("post updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
 });
 
 module.exports = router;

@@ -6,7 +6,8 @@ const PostSchema = new Schema({
     threadId: { type: Schema.Types.ObjectId, ref: 'Thread' },
     content: String,
     photo: { type: String, required: false },
-    userId: { type: Schema.Types.ObjectId, ref: 'User' }
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    likedBy: { type: [Schema.Types.ObjectId], ref: 'User',  required: false },
 });
 
 const Post = mongoose.model('Post', PostSchema);
