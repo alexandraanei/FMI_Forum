@@ -2,7 +2,15 @@ import React, { useState, useContext } from "react";
 import AuthContext from "../../Contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { ListItemText, ListItem, Button, TextField } from "@material-ui/core";
+import {
+  ListItemText,
+  ListItem,
+  Button,
+  TextField,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
+import AddAlertIcon from "@material-ui/icons/AddAlert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import classes from "./ForumItem.module.scss";
@@ -31,6 +39,28 @@ export default function ForumItem(props) {
 
   const handleEditForumInput = (id) => {
     setIsEditing(true);
+  };
+
+  const handleSubscribe = async (id) => {
+    try {
+      await axios.put(`/api/user/subscribeforum/${user._id}`, {
+        forum: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push("/category");
+  };
+
+  const handleUnsubscribe = async (id) => {
+    try {
+      await axios.put(`/api/user/unsubscribeforum/${user._id}`, {
+        forum: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push("/category");
   };
 
   return (
@@ -92,6 +122,37 @@ export default function ForumItem(props) {
           >
             Sterge
           </Button>
+        </React.Fragment>
+      )}
+      {user && (
+        <React.Fragment>
+          <Tooltip
+            title={
+              user?.subscribedForums.includes(forum._id)
+                ? "Dezaboneaza-te"
+                : "Aboneaza-te"
+            }
+            aria-label="subscribe"
+          >
+            <IconButton
+              variant="contained"
+              className={classes.button}
+              color={
+                user?.subscribedForums.includes(forum._id)
+                  ? "primary"
+                  : "default"
+              }
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                user?.subscribedForums.includes(forum._id)
+                  ? handleUnsubscribe(forum._id)
+                  : handleSubscribe(forum._id);
+              }}
+            >
+              <AddAlertIcon />
+            </IconButton>
+          </Tooltip>
         </React.Fragment>
       )}
     </ListItem>

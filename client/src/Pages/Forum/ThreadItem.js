@@ -2,7 +2,15 @@ import React, { useState, useContext } from "react";
 import AuthContext from "../../Contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { ListItemText, ListItem, Button, TextField } from "@material-ui/core";
+import {
+  ListItemText,
+  ListItem,
+  Button,
+  TextField,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
+import AddAlertIcon from "@material-ui/icons/AddAlert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import StarIcon from "@material-ui/icons/Star";
@@ -54,6 +62,28 @@ export default function ThreadItem(props) {
 
   const handleEditThreadInput = (id) => {
     setIsEditing(true);
+  };
+
+  const handleSubscribe = async (id) => {
+    try {
+      await axios.put(`/api/user/subscribepost/${user._id}`, {
+        post: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push(`/forum/${thread.forumId}`);
+  };
+
+  const handleUnsubscribe = async (id) => {
+    try {
+      await axios.put(`/api/user/unsubscribepost/${user._id}`, {
+        post: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push(`/forum/${thread.forumId}`);
   };
 
   return (
@@ -134,6 +164,37 @@ export default function ThreadItem(props) {
           >
             Sterge
           </Button>
+        </React.Fragment>
+      )}
+      {user && (
+        <React.Fragment>
+          <Tooltip
+            title={
+              user?.subscribedThreads.includes(thread._id)
+                ? "Dezaboneaza-te"
+                : "Aboneaza-te"
+            }
+            aria-label="subscribe"
+          >
+            <IconButton
+              variant="contained"
+              className={classes.button}
+              color={
+                user?.subscribedThreads.includes(thread._id)
+                  ? "primary"
+                  : "default"
+              }
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                user?.subscribedThreads.includes(thread._id)
+                  ? handleUnsubscribe(thread._id)
+                  : handleSubscribe(thread._id);
+              }}
+            >
+              <AddAlertIcon />
+            </IconButton>
+          </Tooltip>
         </React.Fragment>
       )}
     </ListItem>

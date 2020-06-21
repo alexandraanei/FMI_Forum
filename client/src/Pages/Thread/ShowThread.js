@@ -139,18 +139,18 @@ export default function ShowThread() {
     history.push(`/thread/${thread._id}`);
   };
 
-  const handleLikePost = async id => {
+  const handleLikePost = async (id) => {
     try {
       await axios.put(`/api/post/like/${id}`, { user: user._id });
     } catch (err) {
       console.log(err.response);
     }
-    
+
     // console.log('like');
     history.push(`/thread/${thread._id}`);
   };
 
-  const handleUnlikePost = async id => {
+  const handleUnlikePost = async (id) => {
     try {
       await axios.put(`/api/post/unlike/${id}`, { user: user._id });
     } catch (err) {
@@ -250,39 +250,44 @@ export default function ShowThread() {
                 {post.content}
               </Typography>
             </CardContent>
-            <CardActions disableSpacing classes={{ root: classes.cardActions }}>
-              <IconButton
-                aria-label="add to favorites"
-                color={
-                  post?.likedBy.includes(user._id) ? "secondary" : "default"
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  post?.likedBy.includes(user._id)
-                    ? handleUnlikePost(post._id)
-                    : handleLikePost(post._id);
-                }}
+            {user && (
+              <CardActions
+                disableSpacing
+                classes={{ root: classes.cardActions }}
               >
-                <FavoriteIcon />
-              </IconButton>
-              <p>{post?.likedBy.length || ""}</p>
-              {(user?.type === "admin" || user?.type === "mod") && (
-                <React.Fragment>
-                  <IconButton aria-label="edit">
-                    <CreateIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeletePost(post._id);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </React.Fragment>
-              )}
-            </CardActions>
+                <IconButton
+                  aria-label="add to favorites"
+                  color={
+                    post?.likedBy.includes(user._id) ? "secondary" : "default"
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    post?.likedBy.includes(user._id)
+                      ? handleUnlikePost(post._id)
+                      : handleLikePost(post._id);
+                  }}
+                >
+                  <FavoriteIcon />
+                </IconButton>
+                <p>{post?.likedBy.length || ""}</p>
+                {(user?.type === "admin" || user?.type === "mod") && (
+                  <React.Fragment>
+                    <IconButton aria-label="edit">
+                      <CreateIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePost(post._id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </React.Fragment>
+                )}
+              </CardActions>
+            )}
           </Card>
           <div> &nbsp; </div>
         </div>

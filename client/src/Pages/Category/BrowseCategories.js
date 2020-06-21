@@ -10,12 +10,13 @@ import {
   Typography,
   ExpansionPanelDetails,
   Button,
-  IconButton, Tooltip
+  IconButton,
+  Tooltip,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddAlertIcon from "@material-ui/icons/AddAlert";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import AuthContext from "../../Contexts/AuthContext";
+import classes from "./BrowseCategories.module.scss";
 
 export const useStyles = makeStyles(() => ({
   root: {
@@ -23,11 +24,12 @@ export const useStyles = makeStyles(() => ({
   },
 }));
 
+
 export default function BrowseCategories() {
   const [categories, setCategories] = useState([]);
   const { user } = useContext(AuthContext);
   const history = useHistory();
-  const classes = useStyles();
+  const root = useStyles();
 
   // useEffect(() => {
   //     let unmounted = false;
@@ -76,7 +78,7 @@ export default function BrowseCategories() {
     history.push(`/category/${id}`);
   };
 
-  const handleSubscribe = async id => {
+  const handleSubscribe = async (id) => {
     try {
       await axios.put(`/api/user/subscribecategory/${user._id}`, {
         category: id,
@@ -87,7 +89,7 @@ export default function BrowseCategories() {
     history.push("/category");
   };
 
-  const handleUnsubscribe = async id => {
+  const handleUnsubscribe = async (id) => {
     try {
       await axios.put(`/api/user/unsubscribecategory/${user._id}`, {
         category: id,
@@ -114,15 +116,17 @@ export default function BrowseCategories() {
         </React.Fragment>
       )}
       {categories.map((cat, index) => (
-        <ExpansionPanel 
-          defaultExpanded={user?.subscribedCategories.includes(cat._id)}
-          key={index} 
-          classes={classes}>
+        <ExpansionPanel
+          defaultExpanded={user?.subscribedCategories.includes(cat._id) || user?.subscribedCategories.length === 0 || !user}
+          key={index}
+          classes={root}
+        >
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
             aria-label="Expand"
             aria-controls={`${cat.title}-content`}
             id={`${cat.title}-header`}
+            className={classes.panel}
           >
             <Typography
               aria-label={`${cat.title}-typo`}
@@ -133,22 +137,33 @@ export default function BrowseCategories() {
               {cat.title}
             </Typography>
             <div style={{ flexGrow: 1 }} />
-            <Tooltip title="Aboneaza-te" aria-label="subscribe">
+            {user && (<Tooltip
+              title={
+                user?.subscribedCategories.includes(cat._id)
+                  ? "Dezaboneaza-te"
+                  : "Aboneaza-te"
+              }
+              aria-label="subscribe"
+            >
               <IconButton
                 variant="contained"
-                color={user?.subscribedCategories.includes(cat._id) ? "primary" : "default"}
-               
+                color={
+                  user?.subscribedCategories.includes(cat._id)
+                    ? "primary"
+                    : "default"
+                }
                 size="small"
-                // className={classes.button}
-                //   startIcon={<DeleteIcon />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    user?.subscribedCategories.includes(cat._id) ? handleUnsubscribe(cat._id) : handleSubscribe(cat._id)
-                  }}
+                className={classes.button}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  user?.subscribedCategories.includes(cat._id)
+                    ? handleUnsubscribe(cat._id)
+                    : handleSubscribe(cat._id);
+                }}
               >
                 <AddAlertIcon />
               </IconButton>
-            </Tooltip>
+            </Tooltip>)}
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <RenderCategory id={cat._id} />
