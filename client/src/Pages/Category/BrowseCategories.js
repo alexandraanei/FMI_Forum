@@ -26,6 +26,8 @@ export const useStyles = makeStyles(() => ({
 export default function BrowseCategories() {
   const [categories, setCategories] = useState([]);
   const { user } = useContext(AuthContext);
+  const history = useHistory();
+  const classes = useStyles();
 
   // useEffect(() => {
   //     let unmounted = false;
@@ -74,8 +76,27 @@ export default function BrowseCategories() {
     history.push(`/category/${id}`);
   };
 
-  const history = useHistory();
-  const classes = useStyles();
+  const handleSubscribe = async id => {
+    try {
+      await axios.put(`/api/user/subscribecategory/${user._id}`, {
+        category: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push("/category");
+  };
+
+  const handleUnsubscribe = async id => {
+    try {
+      await axios.put(`/api/user/unsubscribecategory/${user._id}`, {
+        category: id,
+      });
+    } catch (err) {
+      console.log(err.response);
+    }
+    history.push("/category");
+  };
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -93,7 +114,10 @@ export default function BrowseCategories() {
         </React.Fragment>
       )}
       {categories.map((cat, index) => (
-        <ExpansionPanel defaultExpanded key={index} classes={classes}>
+        <ExpansionPanel 
+          defaultExpanded={user?.subscribedCategories.includes(cat._id)}
+          key={index} 
+          classes={classes}>
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon />}
             aria-label="Expand"
@@ -112,14 +136,15 @@ export default function BrowseCategories() {
             <Tooltip title="Aboneaza-te" aria-label="subscribe">
               <IconButton
                 variant="contained"
-                color="default"
+                color={user?.subscribedCategories.includes(cat._id) ? "primary" : "default"}
+               
                 size="small"
                 // className={classes.button}
                 //   startIcon={<DeleteIcon />}
-                //   onClick={(e) => {
-                //     e.stopPropagation();
-                //     handleDeleteThread(thread._id);
-                //   }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    user?.subscribedCategories.includes(cat._id) ? handleUnsubscribe(cat._id) : handleSubscribe(cat._id)
+                  }}
               >
                 <AddAlertIcon />
               </IconButton>

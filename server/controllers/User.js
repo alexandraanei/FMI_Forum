@@ -34,4 +34,28 @@ router.put('/:id/editPassword', async (req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.put("/subscribecategory/:id", async (req, res) => {
+    User.findById(req.params.id)
+      .then((user) => {
+        user.subscribedCategories.push(req.body.category);
+        user
+          .save()
+          .then(() => res.json("user updated!"))
+          .catch((err) => res.status(400).json("Error: " + err.response));
+      })
+      .catch((err) => res.status(400).json("Error: " + err.response));
+  });
+  
+  router.put("/unsubscribecategory/:id", async (req, res) => {
+    User.findById(req.params.id)
+    .then((user) => {
+        user.subscribedCategories.pull(req.body.category);
+        user
+          .save()
+          .then(() => res.json("user updated!"))
+          .catch((err) => res.status(400).json("Error: " + err.response));
+      })
+      .catch((err) => res.status(400).json("Error: " + err.response));
+  });
+
 module.exports = router;
