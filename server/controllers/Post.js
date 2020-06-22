@@ -98,4 +98,17 @@ router.put("/unlike/:id", async (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err.response));
 });
 
+router.put("/:id/edit", async (req, res) => {
+  Post.findById(req.params.id)
+    .then((post) => {
+      post.content = req.body.content;
+
+      post
+        .save()
+        .then(() => res.json("Post updated!"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 module.exports = router;

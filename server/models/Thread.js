@@ -7,6 +7,7 @@ const ThreadSchema = new Schema({
     forumId: { type: Schema.Types.ObjectId, ref: 'Forum' },
     content: String,
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    likedBy: { type: [Schema.Types.ObjectId], ref: 'User' },
 });
 
 const Thread = mongoose.model('Thread', ThreadSchema);

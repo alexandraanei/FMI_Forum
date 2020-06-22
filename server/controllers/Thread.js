@@ -59,4 +59,28 @@ router.delete("/:id", (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.put("/like/:id", async (req, res) => {
+  Thread.findById(req.params.id)
+    .then((thread) => {
+      thread.likedBy.push(req.body.user);
+      thread
+        .save()
+        .then(() => res.json("thread updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
+});
+
+router.put("/unlike/:id", async (req, res) => {
+  Thread.findById(req.params.id)
+    .then((thread) => {
+      thread.likedBy.pull(req.body.user);
+      thread
+        .save()
+        .then(() => res.json("thread updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
+});
+
 module.exports = router;
