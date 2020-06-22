@@ -5,6 +5,7 @@ import { Container } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, TextField } from "@material-ui/core";
 import AuthContext from "../../Contexts/AuthContext";
+import CreateIcon from "@material-ui/icons/Create";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -63,7 +64,7 @@ export default function SettingsPage() {
             type="password"
             required
             fullWidth
-            label="Old password"
+            label="Parola veche"
             autoFocus
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
@@ -72,7 +73,7 @@ export default function SettingsPage() {
             type="password"
             required
             fullWidth
-            label="New password"
+            label="Parola noua"
             autoFocus
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -83,7 +84,7 @@ export default function SettingsPage() {
             type="password"
             required
             fullWidth
-            label="Confirm new password"
+            label="Confirmare parola noua"
             autoFocus
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -96,9 +97,10 @@ export default function SettingsPage() {
             variant="contained"
             color="primary"
             style={{ marginTop: 20 }}
+            startIcon={<CreateIcon />}
             className={classes.button}
           >
-            Update profile
+            Modifica
           </Button>
         </form>
       </div>

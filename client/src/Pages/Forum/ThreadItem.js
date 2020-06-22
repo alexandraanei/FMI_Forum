@@ -107,7 +107,7 @@ export default function ThreadItem(props) {
             thread.title
           )
         }
-        secondary={new Date(thread.createdAt).toUTCString()}
+        secondary={`Postat de ${thread.userId.firstName} ${thread.userId.lastName} in data de ${new Date(thread.createdAt).toLocaleDateString('ro-RO', { dateStyle: 'full', timeStyle: 'medium' })}`}
       />
       {(user?.type === "admin" || user?.type === "mod") && (
         <React.Fragment>

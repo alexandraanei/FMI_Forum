@@ -69,13 +69,13 @@ export default function SignIn() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                    Login
                 </Typography>
                 <form className={classes.form} onSubmit={handleOnSubmit}>
                     <TextField
                         required
                         fullWidth
-                        label="Email Address"
+                        label="Adresa e-mail"
                         autoFocus
                         value={email}
                         onChange={e => setEmail(e.target.value)}
@@ -85,7 +85,7 @@ export default function SignIn() {
                     <TextField
                         required
                         fullWidth
-                        label="Password"
+                        label="Parola"
                         type="password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
@@ -99,7 +99,7 @@ export default function SignIn() {
                         color="primary"
                         className={classes.submit}
                     >
-                        Sign In
+                        Login
                     </Button>
                 </form>
             </div>

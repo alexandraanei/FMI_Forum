@@ -172,7 +172,7 @@ export default function MenuAppBar() {
                             <SearchIcon />
                         </div>
                         <InputBase
-                            placeholder="Search…"
+                            placeholder="Cauta postare…"
                             classes={{
                                 root: classes.inputRoot,
                                 input: classes.inputInput,
@@ -181,17 +181,17 @@ export default function MenuAppBar() {
                         />
                     </div>
                     <div className={classes.grow}/>
-                    <IconButton aria-label="show 4 new mails" color="inherit">
+                    <IconButton color="inherit">
                         <Badge badgeContent={0} color="secondary">
                             <MailIcon />
                         </Badge>
                     </IconButton>
-                    <IconButton aria-label="show 17 new notifications" color="inherit">
+                    <IconButton color="inherit">
                         <Badge badgeContent={0} color="secondary">
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
-                    {user?.type === 'admin' && <Button color="inherit" onClick={() => history.push('/admin')} >Admin panel</Button>}
+                    {user?.type === 'admin' && <Button color="inherit" onClick={() => history.push('/admin')} >Panou Admin</Button>}
                     {user ?
                         (
                             <div>
@@ -243,8 +243,8 @@ export default function MenuAppBar() {
                                     open={openMenu}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleLogin}>Login</MenuItem>
-                                    <MenuItem onClick={handleRegister}>Register</MenuItem>
+                                    <MenuItem onClick={handleLogin}>Logare</MenuItem>
+                                    <MenuItem onClick={handleRegister}>Inregistrare</MenuItem>
                                 </Menu>
                             </div>
                         )

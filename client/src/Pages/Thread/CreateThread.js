@@ -5,6 +5,8 @@ import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
 import AuthContext from "../../Contexts/AuthContext";
 import TextEditor from "./TextEditor";
+import CreateIcon from "@material-ui/icons/Create";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const CreateForum = () => {
   const { user } = useContext(AuthContext);
@@ -34,11 +36,20 @@ const CreateForum = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1 style={{ marginBottom: "2rem" }}>Create Thread</h1>
+    <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+        style={{ marginRight: 5 }}
+        onClick={() => history.push("/forum/" + id)}
+      >
+        Inapoi
+      </Button>
+      <h1 style={{ marginBottom: "2rem" }}>Postare noua</h1>
 
       <form onSubmit={handleOnSubmit}>
         <TextField
-          label="Title"
+          label="Titlu"
           required
           fullWidth
           margin="normal"
@@ -47,8 +58,13 @@ const CreateForum = () => {
           inputProps={{ maxLength: 50 }}
         />
         <TextEditor onChangeContent={onChangeContent} />
-        <Button type="submit" variant="contained" color="primary">
-          Create
+        <Button
+          startIcon={<CreateIcon />}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          Creeaza
         </Button>
       </form>
     </div>

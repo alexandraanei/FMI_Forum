@@ -4,6 +4,8 @@ import { useHistory, useParams } from "react-router-dom";
 import axios from "axios";
 import ForumItem from "./ForumItem";
 import { List, Button } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import AddIcon from '@material-ui/icons/Add';
 
 export default function BrowseCategories() {
   const { user } = useContext(AuthContext);
@@ -30,13 +32,23 @@ export default function BrowseCategories() {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+        style={{ marginRight: 5 }}
+        onClick={() => history.push("/category")}
+      >
+        Inapoi
+      </Button>
       {(user?.type === "admin" || user?.type === "mod") && (
         <Button
           variant="contained"
           color="primary"
+          startIcon={<AddIcon />}
           onClick={() => history.push("/forum/create/" + id)}
         >
-          Create Forum
+          Forum nou
         </Button>
       )}
       {category && <h1>{category.title}</h1>}

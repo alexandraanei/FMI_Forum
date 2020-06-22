@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Button, TextField } from "@material-ui/core";
 import FileUpload from '@material-ui/icons/AddPhotoAlternate';
 import AuthContext from "../../Contexts/AuthContext";
+import CreateIcon from "@material-ui/icons/Create";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -14,8 +15,8 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
     },
     large: {
-        width: theme.spacing(17),
-        height: theme.spacing(17),
+        width: theme.spacing(25),
+        height: theme.spacing(25),
         marginTop: 20,
     },
     button: {
@@ -86,7 +87,7 @@ export default function ShowProfile() {
                          <input accept="image/*" onChange={onChangeHandler} className={classes.input} id="icon-button-file" type="file" />
                          <label htmlFor="icon-button-file">
                             <Button variant="contained" component="span" className={classes.button}>
-                                <FileUpload/>&nbsp;Upload
+                                <FileUpload/>&nbsp;Incarca
                             </Button>
                         </label>
                         <span className={classes.filename}>   
@@ -95,7 +96,7 @@ export default function ShowProfile() {
                     <TextField
                         required
                         fullWidth
-                        label="First Name"
+                        label="Prenume"
                         autoFocus
                         value={firstName}
                         onChange={e => setFirstName(e.target.value)}
@@ -103,7 +104,7 @@ export default function ShowProfile() {
                     <TextField
                         required
                         fullWidth
-                        label="Last Name"
+                        label="Nume"
                         autoFocus
                         value={lastName}
                         onChange={e => setLastName(e.target.value)}
@@ -119,7 +120,7 @@ export default function ShowProfile() {
                     <TextField
                         required
                         fullWidth
-                        label="Email Address"
+                        label="Adresa e-mail"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
@@ -127,9 +128,10 @@ export default function ShowProfile() {
                         type="submit"
                         variant="contained"
                         color="primary"
+                        startIcon={<CreateIcon />}
                         className={classes.button}
                         >
-                            Update profile
+                            Modifica profil
                     </Button>
                 </form>
             }

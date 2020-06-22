@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddAlertIcon from "@material-ui/icons/AddAlert";
+import AddIcon from '@material-ui/icons/Add';
 import AuthContext from "../../Contexts/AuthContext";
 import classes from "./BrowseCategories.module.scss";
 
@@ -104,13 +105,13 @@ export default function BrowseCategories() {
     <div style={{ padding: "2rem" }}>
       {user?.type === "admin" && (
         <React.Fragment>
-          <h3>Admin options</h3>
           <Button
             variant="contained"
             color="primary"
+            startIcon={<AddIcon />}
             onClick={() => history.push("/category/create")}
           >
-            Creeaza subforum
+            Subforum nou
           </Button>
           <Divider style={{ margin: "2rem 0" }} />
         </React.Fragment>

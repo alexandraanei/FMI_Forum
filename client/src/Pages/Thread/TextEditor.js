@@ -55,7 +55,7 @@ class HeadlinesButton extends Component {
 const toolbarPlugin = createToolbarPlugin();
 const { Toolbar } = toolbarPlugin;
 const plugins = [toolbarPlugin];
-const text = 'Add a description of the thread...';
+const text = 'Adauga o descriere...';
 
 export default class TextEditor extends Component {
 

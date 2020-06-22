@@ -84,13 +84,13 @@ export default function Register() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Register
+                    Inregistrare
                 </Typography>
                 <form className={classes.form} onSubmit={handleOnSubmit}>
                     <TextField
                         required
                         fullWidth
-                        label="First Name"
+                        label="Prenume"
                         autoFocus
                         value={firstName}
                         onChange={e => setFirstName(e.target.value)}
@@ -98,7 +98,7 @@ export default function Register() {
                     <TextField
                         required
                         fullWidth
-                        label="Last Name"
+                        label="Nume"
                         autoFocus
                         value={lastName}
                         onChange={e => setLastName(e.target.value)}
@@ -114,7 +114,7 @@ export default function Register() {
                     <TextField
                         required
                         fullWidth
-                        label="Email Address"
+                        label="Adresa e-mail"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         error={!!emailError}
@@ -123,7 +123,7 @@ export default function Register() {
                     <TextField
                         required
                         fullWidth
-                        label="Password"
+                        label="Parola"
                         type="password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
@@ -133,7 +133,7 @@ export default function Register() {
                     <TextField
                         required
                         fullWidth
-                        label="Password Confirmation"
+                        label="Confirmare parola"
                         type="password"
                         value={passwordConfirmation}
                         onChange={e => setPasswordConfirmation(e.target.value)}
@@ -145,7 +145,7 @@ export default function Register() {
                         color="primary"
                         className={classes.submit}
                     >
-                        Sign In
+                        Inregistrare
                     </Button>
                 </form>
             </div>

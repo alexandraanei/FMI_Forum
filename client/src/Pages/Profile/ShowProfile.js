@@ -5,6 +5,7 @@ import { Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItemText, ListItem, Avatar, Button } from "@material-ui/core";
 import AuthContext from "../../Contexts/AuthContext";
+import CreateIcon from "@material-ui/icons/Create";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -53,13 +54,16 @@ export default function ShowProfile() {
                     <Avatar alt={`${profile.firstName}`} src={profile.avatar} className={classes.large} />
                     <List>
                         <ListItem>
-                            <ListItemText primary={`Full name: ${profile.firstName} ${profile.lastName}`} />
+                            <ListItemText primary={`Nume intreg: ${profile.firstName} ${profile.lastName}`} />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary={`Username: ${profile.username}`} />
                         </ListItem>
                         <ListItem>
-                            <ListItemText primary={`Email: ${profile.email}`} />
+                            <ListItemText primary={`E-mail: ${profile.email}`} />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary={`Rol utilizator: ${profile.type.charAt(0).toUpperCase() + profile.type.slice(1)}`} />
                         </ListItem>
                     </List>
                     {user?._id === id && (
@@ -68,9 +72,10 @@ export default function ShowProfile() {
                             variant="contained"
                             color="primary"
                             className={classes.button}
+                            startIcon={<CreateIcon />}
                             onClick={handleEditProfile}
                         >
-                            Edit profile
+                            Editeaza profil
                         </Button>
                     )}
                 </Fragment>

@@ -84,7 +84,7 @@ export default function ForumItem(props) {
             forum.title
           )
         }
-        secondary={new Date(forum.createdAt).toUTCString()}
+        secondary={new Date(forum.createdAt).toLocaleDateString('ro-RO', { dateStyle: 'full', timeStyle: 'medium' })}
       />
       {user?.type === "admin" && (
         <React.Fragment>

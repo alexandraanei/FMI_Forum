@@ -13,6 +13,8 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  Link,
+  Divider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import FileUpload from "@material-ui/icons/AddPhotoAlternate";
@@ -21,6 +23,8 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AuthContext from "../../Contexts/AuthContext";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -161,6 +165,15 @@ export default function ShowThread() {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ArrowBackIcon />}
+        style={{ marginRight: 5 }}
+        onClick={() => history.push("/forum/" + thread.forumId)}
+      >
+        Inapoi
+      </Button>
       {user?.type === "admin" && (
         <React.Fragment>
           <Button
@@ -200,40 +213,143 @@ export default function ShowThread() {
         </React.Fragment>
       )}
       {thread && (
-        <h1>
-          {isEditing ? (
-            <TextField
-              fullWidth
-              id="margin-none"
-              defaultValue={thread.title}
-              onChange={(e) => setThreadName(e.target.value)}
-              helperText="Schimba nume"
-              inputProps={{ style: { fontSize: 32 } }}
+        <React.Fragment>
+          <h1>
+            {isEditing ? (
+              <TextField
+                fullWidth
+                id="margin-none"
+                defaultValue={thread.title}
+                onChange={(e) => setThreadName(e.target.value)}
+                helperText="Schimba nume"
+                inputProps={{ style: { fontSize: 32 } }}
+              />
+            ) : (
+              thread.title
+            )}
+          </h1>
+          <Card className={classes.replyRoot}>
+            <CardHeader
+              avatar={
+                <Link
+                  component="button"
+                  style={{ fontSize: 18 }}
+                  color="inherit"
+                  onClick={() => history.push("/profile/" + thread.userId._id)}
+                >
+                  <Avatar
+                    src={thread?.userId.avatar}
+                    className={classes.avatar}
+                  />
+                </Link>
+              }
+              title={
+                <Link
+                  component="button"
+                  style={{ fontSize: 18 }}
+                  color="inherit"
+                  onClick={() => history.push("/profile/" + thread?.userId._id)}
+                >{`${thread?.userId.firstName} ${thread?.userId.lastName}`}</Link>
+              }
+              subheader={new Date(thread?.createdAt).toLocaleDateString(
+                "ro-RO",
+                { dateStyle: "full", timeStyle: "medium" }
+              )}
             />
-          ) : (
-            thread.title
-          )}
-        </h1>
+            {/* {thread.photo && (
+              <CardMedia
+                component="img"
+                src={post.photo}
+                style={{
+                  height: post.photo.height,
+                  maxWidth: 300,
+                  maxHeight: 200,
+                  paddingLeft: 20,
+                  paddingTop: 20,
+                }}
+              />
+            )} */}
+            <CardContent classes={{ root: classes.replyContent }}>
+              <div dangerouslySetInnerHTML={{ __html: thread?.content }} />
+            </CardContent>
+            {user && (
+              <CardActions
+                disableSpacing
+                classes={{ root: classes.cardActions }}
+              >
+                <IconButton
+                  aria-label="add to favorites"
+                  // color={
+                  //   thread?.likedBy.includes(user._id) ? "secondary" : "default"
+                  // }
+                  // onClick={(e) => {
+                  //   e.stopPropagation();
+                  //   thread?.likedBy.includes(user._id)
+                  //     ? handleUnlikePost(thread._id)
+                  //     : handleLikePost(thread._id);
+                  // }}
+                >
+                  <FavoriteIcon />
+                </IconButton>
+                {/* <p>{thread?.likedBy.length || ""}</p> */}
+                {(user?.type === "admin" ||
+                  user?.type === "mod" ||
+                  user._id === thread?.userId._id) && (
+                  <React.Fragment>
+                    <IconButton aria-label="edit">
+                      <CreateIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete"
+                      // onClick={(e) => {
+                      //   e.stopPropagation();
+                      //   handleDeletePost(thread._id);
+                      // }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </React.Fragment>
+                )}
+              </CardActions>
+            )}
+          </Card>
+        </React.Fragment>
       )}
-
-      {thread && <div dangerouslySetInnerHTML={{ __html: thread.content }} />}
+      <Divider style={{ margin: "2rem 0" }}/>
+      {posts?.length > 0 && <h3>{posts.length} {posts?.length === 1 ? 'raspuns' : 'raspunsuri'}</h3>}
       {posts.map((post, index) => (
         <div key={index}>
           <Card className={classes.replyRoot}>
             <CardHeader
               avatar={
-                <Avatar
-                  alt={`${index}-avatar`}
-                  src={post.userId.avatar}
-                  className={classes.avatar}
-                />
+                <Link
+                  component="button"
+                  style={{ fontSize: 18 }}
+                  color="inherit"
+                  onClick={() => history.push("/profile/" + post.userId._id)}
+                >
+                  <Avatar
+                    alt={`${index}-avatar`}
+                    src={post.userId.avatar}
+                    className={classes.avatar}
+                  />
+                </Link>
               }
-              title={`${post.userId.firstName} ${post.userId.lastName}`}
-              subheader={new Date(post.createdAt).toUTCString()}
+              title={
+                <Link
+                  component="button"
+                  style={{ fontSize: 18 }}
+                  color="inherit"
+                  onClick={() => history.push("/profile/" + post.userId._id)}
+                >{`${post.userId.firstName} ${post.userId.lastName}`}</Link>
+              }
+              subheader={new Date(post.createdAt).toLocaleDateString("ro-RO", {
+                dateStyle: "full",
+                timeStyle: "medium",
+              })}
             />
             {post.photo && (
               <CardMedia
-                title={`${index}-photo`}
                 component="img"
                 src={post.photo}
                 style={{
@@ -270,7 +386,9 @@ export default function ShowThread() {
                   <FavoriteIcon />
                 </IconButton>
                 <p>{post?.likedBy.length || ""}</p>
-                {(user?.type === "admin" || user?.type === "mod") && (
+                {(user?.type === "admin" ||
+                  user?.type === "mod" ||
+                  user._id === post.userId._id) && (
                   <React.Fragment>
                     <IconButton aria-label="edit">
                       <CreateIcon />
@@ -296,19 +414,21 @@ export default function ShowThread() {
         variant="contained"
         color="primary"
         disabled={page <= 2}
-        style={{ marginRight: "1rem" }}
+        style={{ marginRight: 5 }}
+        startIcon={<ArrowBackIcon />}
         onClick={() => getPosts(page - 2)}
       >
-        Previous page
+        Pagina anterioara
       </Button>
       <Button
         variant="contained"
         color="primary"
         disabled={!hasMore}
-        style={{ marginRight: "1rem" }}
+        style={{ marginRight: 5 }}
+        endIcon={<ArrowForwardIcon />}
         onClick={() => getPosts(page)}
       >
-        Next page
+        Pagina urmatoare
       </Button>
 
       {user && (
@@ -317,7 +437,7 @@ export default function ShowThread() {
           color="primary"
           onClick={() => setIsReplying(true)}
         >
-          Reply
+          Raspunde
         </Button>
       )}
       {isReplying && (
@@ -333,12 +453,12 @@ export default function ShowThread() {
             <Grid item xs>
               <TextField
                 fullWidth
-                label="Reply..."
+                label="Raspunde..."
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
               />
               <FormHelperText id="component-helper-text">
-                Upload photo...
+                Incarca fotografie...
               </FormHelperText>
               <input
                 accept="image/*"
@@ -354,7 +474,7 @@ export default function ShowThread() {
                   className={classes.button}
                 >
                   <FileUpload />
-                  &nbsp;Upload
+                  &nbsp;Incarca
                 </Button>
               </label>
               <span className={classes.filename}>
@@ -363,7 +483,7 @@ export default function ShowThread() {
             </Grid>
           </Grid>
           <Button variant="contained" type="submit">
-            Reply
+            Raspunde
           </Button>
         </form>
       )}
