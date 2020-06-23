@@ -166,7 +166,7 @@ export default function ThreadItem(props) {
           </Button>
         </React.Fragment>
       )}
-      {user && (
+      {user?.type === 'user' && (
         <React.Fragment>
           <Tooltip
             title={

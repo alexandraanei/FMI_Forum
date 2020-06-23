@@ -1,15 +1,52 @@
 const express = require("express");
 const router = express.Router();
 const Thread = require("../models/Thread");
+const multer = require("multer");
 
-router.post("/create", async (req, res) => {
+const DIR = "./uploads/post";
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, DIR);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname.toLowerCase().split(" ").join("-"));
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+    return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 25,
+  },
+  // fileFilter: fileFilter,
+});
+
+router.post("/create", upload.array('photos', 10), async (req, res) => {
   const { title, content, userId, forumId } = req.body;
+  const url = req.protocol + "://" + req.get("host");
   let newThread = Thread({
     title,
+    photos: photos.push(req.file ? url + "/" + req.file.path : ""),
     content,
     createdAt: Date.now(),
     forumId,
     userId,
+    approved: false,
   });
 
   // await newThread.save();
@@ -21,6 +58,11 @@ router.post("/create", async (req, res) => {
       });
   });
   // res.send(newThread);
+});
+
+router.get("/unapproved", async (req, res) => {
+  const threads = await Thread.find({ approved: false }).populate("userId").populate("forumId").populate({ path: 'forumId', populate: 'categoryId' });
+  res.send(threads);
 });
 
 router.get("/:id", async (req, res) => {
@@ -36,7 +78,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/forum/:id", async (req, res) => {
-  const threads = await Thread.find({ forumId: req.params.id }).populate("userId");
+  const threads = await Thread.find({ forumId: req.params.id, approved: true }).populate("userId");
   res.send(threads);
 });
 
@@ -48,6 +90,19 @@ router.put("/:id/edit", async (req, res) => {
       thread
         .save()
         .then(() => res.json("Thread updated!"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.put("/approve/:id", async (req, res) => {
+  Thread.findById(req.params.id)
+    .then((thread) => {
+      thread.approved = true;
+
+      thread
+        .save()
+        .then(() => res.json("Thread approved!"))
         .catch((err) => res.status(400).json("Error: " + err));
     })
     .catch((err) => res.status(400).json("Error: " + err));

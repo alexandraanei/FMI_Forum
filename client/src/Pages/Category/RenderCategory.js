@@ -50,7 +50,7 @@ export default function RenderCategory(props) {
   };
 
   return (
-    <List style={{ width: '100%' }}>
+    <List style={{ width: "100%" }}>
       {fora.map((forum) => (
         <ListItem
           key={forum._id}
@@ -60,33 +60,35 @@ export default function RenderCategory(props) {
         >
           <ListItemText primary={forum.title} />
           <div style={{ flexGrow: 1 }} />
-          {user && (<Tooltip
-            title={
-              user?.subscribedForums.includes(forum._id)
-              ? "Dezaboneaza-te"
-              : "Aboneaza-te"
-            }
-            aria-label="subscribe"
-          >
-            <IconButton
-              variant="contained"
-              className={classes.button}
-              color={
+          {user?.type === "user" && (
+            <Tooltip
+              title={
                 user?.subscribedForums.includes(forum._id)
-                  ? "primary"
-                  : "default"
+                  ? "Dezaboneaza-te"
+                  : "Aboneaza-te"
               }
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                user?.subscribedForums.includes(forum._id)
-                  ? handleUnsubscribe(forum._id)
-                  : handleSubscribe(forum._id);
-              }}
+              aria-label="subscribe"
             >
-              <AddAlertIcon />
-            </IconButton>
-          </Tooltip>)}
+              <IconButton
+                variant="contained"
+                className={classes.button}
+                color={
+                  user?.subscribedForums.includes(forum._id)
+                    ? "primary"
+                    : "default"
+                }
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  user?.subscribedForums.includes(forum._id)
+                    ? handleUnsubscribe(forum._id)
+                    : handleSubscribe(forum._id);
+                }}
+              >
+                <AddAlertIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </ListItem>
       ))}
     </List>

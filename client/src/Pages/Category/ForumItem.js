@@ -124,7 +124,7 @@ export default function ForumItem(props) {
           </Button>
         </React.Fragment>
       )}
-      {user && (
+      {user?.type === 'user' && (
         <React.Fragment>
           <Tooltip
             title={

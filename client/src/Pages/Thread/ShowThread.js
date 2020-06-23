@@ -26,6 +26,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AuthContext from "../../Contexts/AuthContext";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import CheckIcon from "@material-ui/icons/Check";
 import ShowPost from "./ShowPost";
 
 const useStyles = makeStyles((theme) => ({
@@ -160,6 +161,15 @@ export default function ShowThread() {
     setPosts(posts.filter((post) => post._id !== PostId._id));
   };
 
+  const handleApproveThread = async (id) => {
+    try {
+      await axios.put("/api/thread/approve/" + id);
+      history.push(`/thread/${thread._id}`);
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
+
   return (
     <div style={{ padding: "2rem" }}>
       {thread && (
@@ -202,6 +212,7 @@ export default function ShowThread() {
                 color="secondary"
                 className={classes.button}
                 startIcon={<DeleteIcon />}
+                style={{ marginRight: 5 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteThread(thread._id);
@@ -209,6 +220,21 @@ export default function ShowThread() {
               >
                 Sterge postarea
               </Button>
+              {!thread.approved && (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className={classes.button}
+                  startIcon={<CheckIcon />}
+                  style={{ background: "#76e676" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleApproveThread(thread._id);
+                  }}
+                >
+                  Aproba postarea
+                </Button>
+              )}
             </React.Fragment>
           )}
           {thread && (

@@ -7,6 +7,7 @@ import AuthContext from "../../Contexts/AuthContext";
 import TextEditor from "./TextEditor";
 import CreateIcon from "@material-ui/icons/Create";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import AlertStore from '../../Stores/AlertStore';
 
 const CreateForum = () => {
   const { user } = useContext(AuthContext);
@@ -26,8 +27,11 @@ const CreateForum = () => {
     };
 
     const response = await axios.post("/api/thread/create", data);
-    const { _id } = response.data;
-    history.push("/thread/" + _id);
+    AlertStore.showSnackbar({
+      message: 'Postarea va fi revizuita si publicata in scurt timp.',
+      type: 'info'
+    });
+    history.push("/forum/" + id);
   };
 
   const onChangeContent = (content) => {

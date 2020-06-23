@@ -19,6 +19,7 @@ import ShowProfile from "./Pages/Profile/ShowProfile";
 import EditProfile from "./Pages/Profile/EditProfile";
 import AdminPanel from "./Pages/AdminPage/AdminPanel";
 import SettingsPage from "./Pages/Settings/SettingsPage";
+import Alert from "./Components/Alert";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -99,6 +100,7 @@ function App() {
               </Paper>
               </Container>
             </Router>
+            <Alert key="alert" />
           </AuthContext.Provider>
       )}
     </div>

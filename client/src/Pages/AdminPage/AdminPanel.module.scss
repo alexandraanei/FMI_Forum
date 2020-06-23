@@ -1,6 +1,10 @@
-.category .button, .user .button {
+.category .button, .user .button, .thread .button {
     opacity: 0;
 }
-.category:hover .button, .user:hover .button {
+.category:hover .button, .user:hover .button, .thread:hover .button {
     opacity: 1;
+}
+
+.approveButton {
+    background-color: '#eee'
 }

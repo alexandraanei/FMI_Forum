@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddAlertIcon from "@material-ui/icons/AddAlert";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/Add";
 import AuthContext from "../../Contexts/AuthContext";
 import classes from "./BrowseCategories.module.scss";
 
@@ -24,7 +24,6 @@ export const useStyles = makeStyles(() => ({
     backgroundColor: "#f0f2ff",
   },
 }));
-
 
 export default function BrowseCategories() {
   const [categories, setCategories] = useState([]);
@@ -118,7 +117,11 @@ export default function BrowseCategories() {
       )}
       {categories.map((cat, index) => (
         <ExpansionPanel
-          defaultExpanded={user?.subscribedCategories.includes(cat._id) || user?.subscribedCategories.length === 0 || !user}
+          defaultExpanded={
+            user?.subscribedCategories.includes(cat._id) ||
+            user?.subscribedCategories.length === 0 ||
+            !user
+          }
           key={index}
           classes={root}
         >
@@ -133,38 +136,44 @@ export default function BrowseCategories() {
               aria-label={`${cat.title}-typo`}
               onClick={(event) => handleCategoryOnClick(event, cat._id)}
               onFocus={(event) => event.stopPropagation()}
-              style={{ fontWeight: "bold" }}
+              style={{
+                fontWeight: "bold",
+                color: "#3f51b5",
+                textShadow: "0.2px 0.2px",
+              }}
             >
               {cat.title}
             </Typography>
             <div style={{ flexGrow: 1 }} />
-            {user && (<Tooltip
-              title={
-                user?.subscribedCategories.includes(cat._id)
-                  ? "Dezaboneaza-te"
-                  : "Aboneaza-te"
-              }
-              aria-label="subscribe"
-            >
-              <IconButton
-                variant="contained"
-                color={
+            {user?.type === 'user' && (
+              <Tooltip
+                title={
                   user?.subscribedCategories.includes(cat._id)
-                    ? "primary"
-                    : "default"
+                    ? "Dezaboneaza-te"
+                    : "Aboneaza-te"
                 }
-                size="small"
-                className={classes.button}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  user?.subscribedCategories.includes(cat._id)
-                    ? handleUnsubscribe(cat._id)
-                    : handleSubscribe(cat._id);
-                }}
+                aria-label="subscribe"
               >
-                <AddAlertIcon />
-              </IconButton>
-            </Tooltip>)}
+                <IconButton
+                  variant="contained"
+                  color={
+                    user?.subscribedCategories.includes(cat._id)
+                      ? "primary"
+                      : "default"
+                  }
+                  size="small"
+                  className={classes.button}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    user?.subscribedCategories.includes(cat._id)
+                      ? handleUnsubscribe(cat._id)
+                      : handleSubscribe(cat._id);
+                  }}
+                >
+                  <AddAlertIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <RenderCategory id={cat._id} />

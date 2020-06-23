@@ -75,9 +75,7 @@ router.delete("/:id", (req, res) => {
 router.put("/like/:id", async (req, res) => {
   Post.findById(req.params.id)
     .then((post) => {
-      console.log(post);
       post.likedBy.push(req.body.user);
-      console.log(post);
       post
         .save()
         .then(() => res.json("post updated!"))

@@ -12,7 +12,7 @@ import CreateIcon from "@material-ui/icons/Create";
 import classes from "./AdminPanel.module.scss";
 
 export default function CategoryItem(props) {
-  const { index } = props;
+  const { index, setCategories } = props;
   var { category } = props;
   const history = useHistory();
   const [isEditing, setIsEditing] = useState(false);
@@ -20,6 +20,8 @@ export default function CategoryItem(props) {
 
   const handleDeleteCategory = (id) => {
     axios.delete(`/api/category/${id}`);
+    console.log(id);
+    setCategories(id);
     history.push("/admin");
   };
 
