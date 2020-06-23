@@ -1,0 +1,30 @@
+3060331847 b'4d8ff38b8bfb984385848efb2860260fdb2e0dce7136eed81ff3d53979276efb'
+3060331848 b'6ea45e26753a2c21efa2b0055899e48cb70a62c47cca517bd1ddd994d81575c7'
+3060331849 b'e4e26c50a86baf6374f79c0a0faf57f4b41541c9227edeb1b4d842564b6df6d9'
+3060331850 b'56db007402c73c409ff6ddc495f16f9213192d798a4f23528facf15cde127101'
+3060331851 b'929bdc9a7d96d91430a013c635c30f3f0795af1b66394df1e587c08b449c8739'
+3060331852 b'0000000000000000000d7612d743325d8e47cb9e506d547694478f35f736188e'
+
+3000000000 b'70ba305ff525556330ab7f3fc3f342f2e82acd8d896e52dee84c0fec07fd8881'
+3000000001 b'e16392883f05773debd5be4f8e9b99d3445c3539b031cd857ac0dc48de85c3f4'
+3000000002 b'e7becb7c0bc3b14370dc33f289822e61b706febaae6f0ba7b9c96f4c0e31ffed'
+3000000003 b'741fe37c2260738ceaeab90429b8adce1f1c1887a2a43855a79353cf35725e05'
+3000000004 b'be3336f846a487f00de37b1c7565e6dcf600b25fbb54025cc7776337b5d6ebc1'
+3000000005 b'96593ee8dd9d5a875b60acdcff5d8d940415ea8dfbb9c4a87eff7d7d509dd85e'
+
+
+Cazul 1:
+  § Valoarea nonce1 gasita: 3060331852
+  § Valoarea hash a blocului care satisfice dificultatea, calculata din
+valorile date mai jos si nonce 1
+§ Primele 5 valori hash, corespunzatoare lui nonce = 3 000 000 000
+… 3 000 000 004.
+o Cazul 2:
+§ Valoarea initiala nonce2 (valoarea pseudo-aleatoare de la care ati
+pornit)
+§ Numarul de testari (cate valori nonce ati testat pornind de la
+nonce2 prin incrementare)
+§ Am gasit o valoare hash care satisfice dificultatea in cazul 2:
+DA/NU
+§ Daca DA: nonce2 si valoarea hash
+o Codul sursa pentru rezolvarea temei (raw sau link catre cod)

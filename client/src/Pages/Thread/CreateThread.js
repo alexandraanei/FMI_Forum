@@ -7,40 +7,52 @@ import AuthContext from "../../Contexts/AuthContext";
 import TextEditor from "./TextEditor";
 import CreateIcon from "@material-ui/icons/Create";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import AlertStore from '../../Stores/AlertStore';
+import AlertStore from "../../Stores/AlertStore";
 
-const CreateForum = () => {
+export default function CreateThread () {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const history = useHistory();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [files, setFiles] = useState("");
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
 
-    const data = {
-      title,
-      content,
-      userId: user._id,
-      forumId: id,
-    };
+    const data = new FormData();
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        data.append("files", files[i]);
+      }
+    }
+    data.append("title", title);
+    data.append("content", content);
+    data.append("userId", user._id);
+    data.append("forumId", id);
 
-    const response = await axios.post("/api/thread/create", data);
-    AlertStore.showSnackbar({
-      message: 'Postarea va fi revizuita si publicata in scurt timp.',
-      type: 'info'
-    });
-    history.push("/forum/" + id);
+    console.log(...data);
+
+    try {
+      const response = await axios.post("/api/thread/create", data);
+      AlertStore.showSnackbar({
+        message: "Postarea va fi revizuita si publicata in scurt timp.",
+        type: "info",
+      });
+      history.push("/forum/" + id);
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
   };
 
-  const onChangeContent = (content) => {
+  const onChangeContent = (content, files) => {
     setContent(content);
+    setFiles(files);
   };
 
   return (
     <div style={{ padding: "2rem" }}>
-    <Button
+      <Button
         variant="contained"
         color="primary"
         startIcon={<ArrowBackIcon />}
@@ -51,7 +63,7 @@ const CreateForum = () => {
       </Button>
       <h1 style={{ marginBottom: "2rem" }}>Postare noua</h1>
 
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit} enctype="multipart/form-data">
         <TextField
           label="Titlu"
           required
@@ -74,5 +86,3 @@ const CreateForum = () => {
     </div>
   );
 };
-
-export default CreateForum;

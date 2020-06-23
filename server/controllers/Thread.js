@@ -3,7 +3,7 @@ const router = express.Router();
 const Thread = require("../models/Thread");
 const multer = require("multer");
 
-const DIR = "./uploads/post";
+const DIR = "./uploads/threads";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -36,12 +36,31 @@ const upload = multer({
   // fileFilter: fileFilter,
 });
 
-router.post("/create", upload.array('photos', 10), async (req, res) => {
+router.post("/create", upload.array("files", 10), async (req, res) => {
   const { title, content, userId, forumId } = req.body;
   const url = req.protocol + "://" + req.get("host");
+  var filesArray = [];
+  var photosArray = [];
+  if (req.files) {
+    for (let i = 0; i < req.files.length; i++) {
+      if (
+        req.files[i].originalname.slice(-3) === "png" ||
+        req.files[i].originalname.slice(-3) === "jpg" ||
+        req.files[i].originalname.slice(-4) === "jpeg" ||
+        req.files[i].originalname.slice(-3) === "gif" ||
+        req.files[i].originalname.slice(-3) === "bmp"
+      ) {
+        photosArray.push(req.files[i] ? url + "/" + req.files[i].path : "");
+      } else {
+        filesArray.push(req.files[i] ? url + "/" + req.files[i].path : "");
+      }
+    }
+  }
+  console.log(filesArray, photosArray);
   let newThread = Thread({
     title,
-    photos: photos.push(req.file ? url + "/" + req.file.path : ""),
+    files: filesArray,
+    photos: photosArray,
     content,
     createdAt: Date.now(),
     forumId,
@@ -49,7 +68,6 @@ router.post("/create", upload.array('photos', 10), async (req, res) => {
     approved: false,
   });
 
-  // await newThread.save();
   newThread.save(function (err, thread) {
     Thread.findOne(thread)
       .populate("userId")
@@ -57,11 +75,13 @@ router.post("/create", upload.array('photos', 10), async (req, res) => {
         res.send(thread);
       });
   });
-  // res.send(newThread);
 });
 
 router.get("/unapproved", async (req, res) => {
-  const threads = await Thread.find({ approved: false }).populate("userId").populate("forumId").populate({ path: 'forumId', populate: 'categoryId' });
+  const threads = await Thread.find({ approved: false })
+    .populate("userId")
+    .populate("forumId")
+    .populate({ path: "forumId", populate: "categoryId" });
   res.send(threads);
 });
 
@@ -78,7 +98,10 @@ router.get("/:id", async (req, res) => {
 });
 
 router.get("/forum/:id", async (req, res) => {
-  const threads = await Thread.find({ forumId: req.params.id, approved: true }).populate("userId");
+  const threads = await Thread.find({
+    forumId: req.params.id,
+    approved: true,
+  }).populate("userId");
   res.send(threads);
 });
 

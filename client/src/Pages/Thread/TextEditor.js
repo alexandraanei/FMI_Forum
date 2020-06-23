@@ -1,22 +1,35 @@
 /* eslint-disable react/no-multi-comp */
-import React, { Component } from 'react';
-import Editor, { createEditorStateWithText } from 'draft-js-plugins-editor';
-import { stateToHTML } from 'draft-js-export-html';
-import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
+import React, { Component } from "react";
+import Editor, { createEditorStateWithText } from "draft-js-plugins-editor";
+import { stateToHTML } from "draft-js-export-html";
+import createToolbarPlugin, { Separator } from "draft-js-static-toolbar-plugin";
 import {
-  ItalicButton, BoldButton, UnderlineButton, CodeButton, HeadlineOneButton, HeadlineTwoButton,
-  HeadlineThreeButton, UnorderedListButton, OrderedListButton, BlockquoteButton, CodeBlockButton,
-} from 'draft-js-buttons';
-import classes from './TextEditor.module.scss';
-import 'draft-js-static-toolbar-plugin/lib/plugin.css';
+  ItalicButton,
+  BoldButton,
+  UnderlineButton,
+  CodeButton,
+  HeadlineOneButton,
+  HeadlineTwoButton,
+  HeadlineThreeButton,
+  UnorderedListButton,
+  OrderedListButton,
+  BlockquoteButton,
+  CodeBlockButton,
+} from "draft-js-buttons";
+import classes from "./TextEditor.module.scss";
+import "draft-js-static-toolbar-plugin/lib/plugin.css";
+import { Button, FormHelperText } from "@material-ui/core";
+import FileUpload from "@material-ui/icons/AddPhotoAlternate";
 
 class HeadlinesPicker extends Component {
   componentDidMount() {
-    setTimeout(() => { window.addEventListener('click', this.onWindowClick); });
+    setTimeout(() => {
+      window.addEventListener("click", this.onWindowClick);
+    });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.onWindowClick);
+    window.removeEventListener("click", this.onWindowClick);
   }
 
   onWindowClick = () =>
@@ -28,7 +41,9 @@ class HeadlinesPicker extends Component {
     const buttons = [HeadlineOneButton, HeadlineTwoButton, HeadlineThreeButton];
     return (
       <div>
-        {buttons.map((Button, i) => <Button key={i} {...this.props} />)}
+        {buttons.map((Button, i) => (
+          <Button key={i} {...this.props} />
+        ))}
       </div>
     );
   }
@@ -55,55 +70,87 @@ class HeadlinesButton extends Component {
 const toolbarPlugin = createToolbarPlugin();
 const { Toolbar } = toolbarPlugin;
 const plugins = [toolbarPlugin];
-const text = 'Adauga o descriere...';
+const text = "Adauga o descriere...";
 
 export default class TextEditor extends Component {
-
   state = {
     editorState: createEditorStateWithText(text),
+    uploadFiles: [],
   };
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    this.props.onChangeContent(stateToHTML(editorState.getCurrentContent()));
-
+    this.props.onChangeContent(stateToHTML(editorState.getCurrentContent()), this.state.uploadFiles);
   };
 
   focus = () => {
     this.editor.focus();
   };
 
+  onChangeHandler = (e) => {
+    console.log(e.target.files);
+    this.setState({ uploadFiles: e.target.files });
+  };
+
   render() {
-      
-      
     return (
-        <div className={classes.editor} onClick={this.focus}>
-          <Editor
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-            plugins={plugins}
-            ref={(element) => { this.editor = element; }}
-          />
-          <Toolbar>
-            {
-              // may be use React.Fragment instead of div to improve perfomance after React 16
-              (externalProps) => (
-                <React.Fragment>
-                  <BoldButton {...externalProps} />
-                  <ItalicButton {...externalProps} />
-                  <UnderlineButton {...externalProps} />
-                  <CodeButton {...externalProps} />
-                  <Separator {...externalProps} />
-                  <HeadlinesButton {...externalProps} />
-                  <UnorderedListButton {...externalProps} />
-                  <OrderedListButton {...externalProps} />
-                  <BlockquoteButton {...externalProps} />
-                  <CodeBlockButton {...externalProps} />
-                </React.Fragment>
-              )
-            }
-          </Toolbar>
-        </div>
+      <div className={classes.editor} onClick={this.focus}>
+        <Editor
+          editorState={this.state.editorState}
+          onChange={this.onChange}
+          plugins={plugins}
+          ref={(element) => {
+            this.editor = element;
+          }}
+        />
+        <Toolbar>
+          {
+            // may be use React.Fragment instead of div to improve perfomance after React 16
+            (externalProps) => (
+              <React.Fragment>
+                <BoldButton {...externalProps} />
+                <ItalicButton {...externalProps} />
+                <UnderlineButton {...externalProps} />
+                <CodeButton {...externalProps} />
+                <Separator {...externalProps} />
+                <HeadlinesButton {...externalProps} />
+                <UnorderedListButton {...externalProps} />
+                <OrderedListButton {...externalProps} />
+                <BlockquoteButton {...externalProps} />
+                <CodeBlockButton {...externalProps} />
+              </React.Fragment>
+            )
+          }
+        </Toolbar>
+        <FormHelperText id="component-helper-text" >
+          Incarca fisiere...
+        </FormHelperText>
+        <input
+          // accept="image/*"
+          multiple
+          onChange={this.onChangeHandler}
+          className={classes.input}
+          id="icon-button-file"
+          type="file"
+        />
+        <label htmlFor="icon-button-file">
+          <Button
+            variant="contained"
+            component="span"
+            className={classes.button}
+          >
+            <FileUpload />
+            &nbsp;Incarca
+          </Button>
+        </label>
+        <span className={classes.filename}>
+          {this.state.uploadFiles.length > 0
+            ? this.state.uploadFiles.length === 1
+              ? this.state.uploadFiles[0].name
+              : `${this.state.uploadFiles.length} files`
+            : ""}
+        </span>
+      </div>
     );
   }
 }

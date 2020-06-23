@@ -10,7 +10,6 @@ import {
   Card,
   CardActions,
   CardHeader,
-  CardMedia,
   CardContent,
   Typography,
   Link,
@@ -28,6 +27,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import CheckIcon from "@material-ui/icons/Check";
 import ShowPost from "./ShowPost";
+import { Carousel } from "antd";
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -66,8 +66,11 @@ export default function ShowThread() {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [replyPhoto, setReplyPhoto] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  // const [isEditingPost, setIsEditingPost] = useState(false);
   const [threadName, setThreadName] = useState("");
+  const [like, setLike] = useState(false);
+  const [likesLength, setLikesLength] = useState(0);
   const { id } = useParams();
 
   useEffect(() => {
@@ -78,7 +81,10 @@ export default function ShowThread() {
 
   const getThread = async () => {
     const response = await axios.get("/api/thread/" + id);
+    console.log(response.data);
     setThread(response.data);
+    setLike(user !== null ? response.data.likedBy.includes(user?._id) : false);
+    setLikesLength(response.data.likedBy.length);
   };
 
   const getPosts = async (page) => {
@@ -121,7 +127,7 @@ export default function ShowThread() {
   };
 
   const handleEditThread = async (id) => {
-    setIsEditing(false);
+    setIsEditingTitle(false);
     thread.title = threadName === "" ? thread.title : threadName;
     try {
       await axios.put("/api/thread/" + id + "/edit", { title: thread.title });
@@ -131,7 +137,7 @@ export default function ShowThread() {
   };
 
   const handleEditThreadInput = (id) => {
-    setIsEditing(true);
+    setIsEditingTitle(true);
   };
 
   const handleDeleteThread = () => {
@@ -146,6 +152,8 @@ export default function ShowThread() {
       console.log(err.response);
     }
     history.push(`/thread/${thread._id}`);
+    setLike(true);
+    setLikesLength(likesLength + 1);
   };
 
   const handleUnlikeThread = async (id) => {
@@ -155,6 +163,8 @@ export default function ShowThread() {
       console.log(err.response);
     }
     history.push(`/thread/${thread._id}`);
+    setLike(false);
+    setLikesLength(likesLength - 1);
   };
 
   const handleSetPosts = (PostId) => {
@@ -183,7 +193,7 @@ export default function ShowThread() {
           >
             Inapoi
           </Button>
-          {(user?.type === "admin" || user._id === thread.userId._id) && (
+          {(user?.type === "admin" || user?._id === thread.userId._id) && (
             <React.Fragment>
               <Button
                 variant="contained"
@@ -192,7 +202,7 @@ export default function ShowThread() {
                 style={{ marginRight: 4 }}
                 startIcon={<CreateIcon />}
                 onClick={
-                  isEditing
+                  isEditingTitle
                     ? (e) => {
                         e.stopPropagation();
                         e.preventDefault();
@@ -205,7 +215,7 @@ export default function ShowThread() {
                       }
                 }
               >
-                {isEditing ? "Ok" : "Redenumeste titlu"}
+                {isEditingTitle ? "Ok" : "Redenumeste titlu"}
               </Button>
               <Button
                 variant="contained"
@@ -240,7 +250,7 @@ export default function ShowThread() {
           {thread && (
             <React.Fragment>
               <h1>
-                {isEditing ? (
+                {isEditingTitle ? (
                   <TextField
                     fullWidth
                     id="margin-none"
@@ -298,21 +308,34 @@ export default function ShowThread() {
                     </React.Fragment>
                   }
                 />
-                {/* {thread.photo && (
-              <CardMedia
-                component="img"
-                src={post.photo}
-                style={{
-                  height: post.photo.height,
-                  maxWidth: 300,
-                  maxHeight: 200,
-                  paddingLeft: 20,
-                  paddingTop: 20,
-                }}
-              />
-            )} */}
-                <CardContent classes={{ root: classes.replyContent }}>
+                <CardContent >
                   <div dangerouslySetInnerHTML={{ __html: thread.content }} />
+                </CardContent>
+                {thread.photos.length > 0 && (
+                  <Carousel effect="fade" dotPosition="top">
+                    {thread.photos.map((photo, index) => (
+                      <img
+                        alt="alt"
+                        src={photo}
+                        key={index}
+                        width={photo.width}
+                        height={photo.height}
+                      />
+                    ))}
+                  </Carousel>
+                )}
+
+                <CardContent classes={{ root: classes.replyContent }}>
+                  {thread.files.length > 0 && (
+                    <div>
+                      Fisiere atasate:
+                      {thread.files.map((file, index) => (
+                        <div key={index}>
+                          <Link href={file}>{file}</Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
                 {user && (
                   <CardActions
@@ -320,23 +343,15 @@ export default function ShowThread() {
                     classes={{ root: classes.cardActions }}
                   >
                     <Tooltip
-                      title={
-                        thread.likedBy.includes(user._id)
-                          ? "Sterge aprecierea"
-                          : "Apreciaza"
-                      }
+                      title={like ? "Sterge aprecierea" : "Apreciaza"}
                       aria-label="subscribe"
                     >
                       <IconButton
                         aria-label="add to favorites"
-                        color={
-                          thread.likedBy.includes(user._id)
-                            ? "secondary"
-                            : "default"
-                        }
+                        color={like ? "secondary" : "default"}
                         onClick={(e) => {
                           e.stopPropagation();
-                          thread.likedBy.includes(user._id)
+                          like
                             ? handleUnlikeThread(thread._id)
                             : handleLikeThread(thread._id);
                         }}
@@ -345,11 +360,11 @@ export default function ShowThread() {
                       </IconButton>
                     </Tooltip>
                     <p>
-                      {thread.likedBy.length > 0 &&
+                      {likesLength > 0 &&
                         `${
-                          thread.likedBy.length === 1
+                          likesLength === 1
                             ? "O persoana "
-                            : `${thread.likedBy.length} persoane `
+                            : `${likesLength} persoane `
                         }apreciaza aceasta postare`}
                     </p>
                     <div style={{ flexGrow: 1 }} />

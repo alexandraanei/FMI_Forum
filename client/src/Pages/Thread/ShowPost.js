@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ShowThread(props) {
+export default function ShowPost(props) {
   const classes = useStyles();
   const history = useHistory();
   const { user } = useContext(AuthContext);
@@ -59,7 +59,7 @@ export default function ShowThread(props) {
   const [postContent, setPostContent] = useState("");
   const [postPhoto, setPostPhoto] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [like, setLike] = useState(post?.likedBy.includes(user._id));
+  const [like, setLike] = useState(post?.likedBy.includes(user?._id));
   const [likesLength, setLikesLength] = useState(post?.likedBy.length);
 
   const handleDeletePost = (id) => {
