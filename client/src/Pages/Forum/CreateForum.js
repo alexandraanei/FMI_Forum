@@ -3,6 +3,7 @@ import { TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
+import AlertStore from "../../Stores/AlertStore";
 
 const CreateForum = () => {
     const { id } = useParams();
@@ -18,6 +19,10 @@ const CreateForum = () => {
         };
 
         const response = await axios.post('/api/forum/create', data);
+        AlertStore.showSnackbar({
+            message: "Forum creat cu succes.",
+            type: "success",
+          });
         const { _id } = response.data;
         history.push('/forum/' + _id);
     };

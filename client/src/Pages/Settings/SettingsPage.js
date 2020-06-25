@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, TextField } from "@material-ui/core";
 import AuthContext from "../../Contexts/AuthContext";
 import CreateIcon from "@material-ui/icons/Create";
+import AlertStore from "../../Stores/AlertStore";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,7 +41,11 @@ export default function SettingsPage() {
     let errors = 0;
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords don't match.");
+      setPasswordError("Parole diferite");
+      AlertStore.showSnackbar({
+        message: "Parolele nu sunt identice.",
+        type: "error",
+      });
       errors++;
     }
 
@@ -51,6 +56,10 @@ export default function SettingsPage() {
     try {
       await axios.put("/api/user/" + id + "/editPassword", data);
       history.push("/profile/" + id);
+      AlertStore.showSnackbar({
+        message: "Parola modificata cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response.data.message);
     }

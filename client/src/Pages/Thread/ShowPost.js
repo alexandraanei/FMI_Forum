@@ -24,6 +24,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import AuthContext from "../../Contexts/AuthContext";
+import AlertStore from "../../Stores/AlertStore";
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -65,6 +66,10 @@ export default function ShowPost(props) {
   const handleDeletePost = (id) => {
     setPosts(post);
     axios.delete(`/api/post/${id}`);
+    AlertStore.showSnackbar({
+      message: "Postarea a fost stearsa cu succes.",
+      type: "success",
+    });
     history.push(`/thread/${post.threadId}`);
   };
 
@@ -95,6 +100,10 @@ export default function ShowPost(props) {
     post.content = postContent === "" ? post.content : postContent;
     try {
       await axios.put("/api/post/" + id + "/edit", { content: post.content });
+      AlertStore.showSnackbar({
+        message: "Postarea a fost modificata cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -187,12 +196,12 @@ export default function ShowPost(props) {
                 <FavoriteIcon />
               </IconButton>
             </Tooltip>
-            <p>
+            <div>
               {likesLength > 0 &&
                 `${
                   likesLength === 1 ? "O persoana " : `${likesLength} persoane `
                 }apreciaza acest comentariu`}
-            </p>
+            </div>
             <div style={{ flexGrow: 1 }} />
             {(user?.type === "admin" ||
               user?.type === "mod" ||

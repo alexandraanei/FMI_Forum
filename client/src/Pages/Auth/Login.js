@@ -5,6 +5,7 @@ import AuthContext from "../../Contexts/AuthContext";
 import { Avatar, Button, TextField, Typography, Container } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
+import AlertStore from '../../Stores/AlertStore';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -51,6 +52,10 @@ export default function SignIn() {
             const {token, user} = response.data;
             localStorage.setItem("token", token);
             setUser(user);
+            AlertStore.showSnackbar({
+                message: "Logarea a fost efectuata cu succes",
+                type: "success",
+              });
             history.push('/category');
         } catch (e) {
             const message = e.response.data.message;

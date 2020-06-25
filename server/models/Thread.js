@@ -10,7 +10,8 @@ const ThreadSchema = new Schema({
     likedBy: { type: [Schema.Types.ObjectId], ref: 'User' },
     approved: Boolean,
     files: { type: [String], required: false },
-    photos: { type: [String], required: false},
+    photos: { type: [String], required: false },
+    deadline: { type: String, required: false },
 });
 
 const Thread = mongoose.model('Thread', ThreadSchema);

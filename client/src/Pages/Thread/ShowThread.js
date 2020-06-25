@@ -28,6 +28,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import CheckIcon from "@material-ui/icons/Check";
 import ShowPost from "./ShowPost";
 import { Carousel } from "antd";
+import AlertStore from "../../Stores/AlertStore";
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -115,6 +116,10 @@ export default function ShowThread() {
 
     try {
       const response = await axios.post("/api/post/create", data);
+      AlertStore.showSnackbar({
+        message: "Comentariul a fost trimis.",
+        type: "success",
+      });
       setPosts([...posts, response.data]);
       setReplyContent("");
     } catch (err) {
@@ -131,6 +136,10 @@ export default function ShowThread() {
     thread.title = threadName === "" ? thread.title : threadName;
     try {
       await axios.put("/api/thread/" + id + "/edit", { title: thread.title });
+      AlertStore.showSnackbar({
+        message: "Postarea a fost modificata cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -142,6 +151,10 @@ export default function ShowThread() {
 
   const handleDeleteThread = () => {
     axios.delete(`/api/thread/${thread._id}`);
+    AlertStore.showSnackbar({
+      message: "Postarea a fost stearsa cu succes.",
+      type: "success",
+    });
     history.push(`/forum/${thread.forumId}`);
   };
 
@@ -174,6 +187,10 @@ export default function ShowThread() {
   const handleApproveThread = async (id) => {
     try {
       await axios.put("/api/thread/approve/" + id);
+      AlertStore.showSnackbar({
+        message: "Postarea a fost aprobata cu succes.",
+        type: "success",
+      });
       history.push(`/thread/${thread._id}`);
     } catch (err) {
       console.log(err.response.data.message);
@@ -308,9 +325,10 @@ export default function ShowThread() {
                     </React.Fragment>
                   }
                 />
-                <CardContent >
+                <CardContent style={{ marginBottom: -20 }}>
                   <div dangerouslySetInnerHTML={{ __html: thread.content }} />
                 </CardContent>
+                {thread.deadline && <CardContent >Deadline: {thread.deadline}</CardContent>}
                 {thread.photos.length > 0 && (
                   <Carousel effect="fade" dotPosition="top">
                     {thread.photos.map((photo, index) => (
@@ -331,7 +349,7 @@ export default function ShowThread() {
                       Fisiere atasate:
                       {thread.files.map((file, index) => (
                         <div key={index}>
-                          <Link href={file}>{file}</Link>
+                          <Link href={file}>{file} </Link>
                         </div>
                       ))}
                     </div>
@@ -359,14 +377,14 @@ export default function ShowThread() {
                         <FavoriteIcon />
                       </IconButton>
                     </Tooltip>
-                    <p>
+                    <div>
                       {likesLength > 0 &&
                         `${
                           likesLength === 1
                             ? "O persoana "
                             : `${likesLength} persoane `
                         }apreciaza aceasta postare`}
-                    </p>
+                    </div>
                     <div style={{ flexGrow: 1 }} />
                     {(user?.type === "admin" ||
                       user._id === thread.userId._id) && (
@@ -383,9 +401,9 @@ export default function ShowThread() {
           )}
           <Divider style={{ margin: "2rem 0" }} />
           {posts?.length > 0 && (
-            <h3>
+            <h2>
               {posts.length} {posts?.length === 1 ? "raspuns" : "raspunsuri"}
-            </h3>
+            </h2>
           )}
           {posts.map((post, index) => (
             <ShowPost

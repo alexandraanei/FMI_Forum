@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import AddAlertIcon from "@material-ui/icons/AddAlert";
 import classes from "./BrowseCategories.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function RenderCategory(props) {
   const history = useHistory();
@@ -32,6 +33,10 @@ export default function RenderCategory(props) {
       await axios.put(`/api/user/subscribeforum/${user._id}`, {
         forum: id,
       });
+      AlertStore.showSnackbar({
+        message: "Te-ai abonat cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -42,6 +47,10 @@ export default function RenderCategory(props) {
     try {
       await axios.put(`/api/user/unsubscribeforum/${user._id}`, {
         forum: id,
+      });
+      AlertStore.showSnackbar({
+        message: "Te-ai dezabonat cu succes.",
+        type: "success",
       });
     } catch (err) {
       console.log(err.response);

@@ -73,6 +73,7 @@ export default function AdminPanel() {
       )}
       {toBeApprovedThreads.length > 0 && (
         <React.Fragment>
+        <Divider style={{ margin: "2rem 0" }} />
           <h3>Postari in asteptare</h3>
           <List>
             {toBeApprovedThreads.map((thread, index) => (

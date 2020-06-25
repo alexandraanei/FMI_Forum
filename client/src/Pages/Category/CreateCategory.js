@@ -5,6 +5,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import CreateIcon from "@material-ui/icons/Create";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import AlertStore from '../../Stores/AlertStore';
 
 const CreateCategory = () => {
   const history = useHistory();
@@ -19,6 +20,10 @@ const CreateCategory = () => {
 
     const response = await axios.post("/api/category/create", data);
     const { _id } = response.data;
+    AlertStore.showSnackbar({
+      message: "Subforumul a fost creat cu succes.",
+      type: "success",
+    });
     history.push("/category/" + _id);
   };
 

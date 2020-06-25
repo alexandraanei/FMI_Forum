@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import 'antd/dist/antd.css';
 import AuthContext from "./Contexts/AuthContext";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import axios from "axios";
@@ -19,6 +20,7 @@ import ShowProfile from "./Pages/Profile/ShowProfile";
 import EditProfile from "./Pages/Profile/EditProfile";
 import AdminPanel from "./Pages/AdminPage/AdminPanel";
 import SettingsPage from "./Pages/Settings/SettingsPage";
+import CalendarPage from "./Pages/Calendar/CalendarPage";
 import Alert from "./Components/Alert";
 
 function App() {
@@ -95,6 +97,9 @@ function App() {
                   </Route>
                   <Route path="/admin">
                     {user?.type === 'admin' ? <AdminPanel/> : <Redirect to="/"/>}
+                  </Route>
+                  <Route path="/calendar/">
+                    {user ? <CalendarPage/> : <Redirect to="/"/>}
                   </Route>
                 </Switch>
               </Paper>

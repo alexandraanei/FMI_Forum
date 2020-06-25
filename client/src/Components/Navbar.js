@@ -11,24 +11,24 @@ import {
   Button,
   Link,
   IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  InputBase,
+  // Drawer,
+  // List,
+  // ListItem,
+  // ListItemIcon,
+  // ListItemText,
+  // Divider,
+  // InputBase,
   Badge,
   Avatar,
 } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
+// import MenuIcon from "@material-ui/icons/Menu";
+// import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
+// import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
+// import InboxIcon from "@material-ui/icons/MoveToInbox";
+import EventIcon from "@material-ui/icons/Event";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,7 +93,7 @@ export default function MenuAppBar() {
   const id = user && user._id;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [sidebar, setSidebar] = React.useState(false);
+  // const [sidebar, setSidebar] = React.useState(false);
   const openMenu = Boolean(anchorEl);
 
   const logout = () => {
@@ -130,52 +130,47 @@ export default function MenuAppBar() {
     history.push("/settings");
   };
 
-  const toggleDrawer = (open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-    setSidebar(open);
-  };
+  // const toggleDrawer = (open) => (event) => {
+  //   if (
+  //     event.type === "keydown" &&
+  //     (event.key === "Tab" || event.key === "Shift")
+  //   ) {
+  //     return;
+  //   }
+  //   setSidebar(open);
+  // };
 
-  const renderSidebar = (
-    <div>
-      <Drawer anchor={"left"} open={sidebar} onClose={toggleDrawer(false)}>
-        <div
-          className={classes.drawer}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-            Online users
-          <List>
-            {["Online1", "Online2"].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          Calendar
-          <Calendar
-            // onChange={this.onChange}
-            // value={this.state.date}
-          />
-        </div>
-      </Drawer>
-    </div>
-  );
+  // const renderSidebar = (
+  //   <div>
+  //     <Drawer anchor={"left"} open={sidebar} onClose={toggleDrawer(false)}>
+  //       <div
+  //         className={classes.drawer}
+  //         role="presentation"
+  //         onClick={toggleDrawer(false)}
+  //         onKeyDown={toggleDrawer(false)}
+  //       >
+  //         Online users
+  //         <List>
+  //           {["Online1", "Online2"].map((text, index) => (
+  //             <ListItem button key={text}>
+  //               <ListItemIcon>
+  //                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+  //               </ListItemIcon>
+  //               <ListItemText primary={text} />
+  //             </ListItem>
+  //           ))}
+  //         </List>
+  //         <Divider />
+  //       </div>
+  //     </Drawer>
+  //   </div>
+  // );
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             edge="start"
             className={classes.menuButton}
             color="inherit"
@@ -183,8 +178,8 @@ export default function MenuAppBar() {
             onClick={toggleDrawer(true)}
           >
             <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          </IconButton> */}
+          <Typography variant="h6" className={classes.title} style={{ paddingLeft: 20 }}>
             <Link
               color="inherit"
               underline="none"
@@ -207,11 +202,14 @@ export default function MenuAppBar() {
                         />
                     </div> */}
           <div className={classes.grow} />
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => history.push("/calendar")} >
+            <EventIcon />
+          </IconButton>
+          {/* <IconButton color="inherit">
             <Badge badgeContent={0} color="secondary">
               <MailIcon />
             </Badge>
-          </IconButton>
+          </IconButton> */}
           <IconButton color="inherit">
             <Badge badgeContent={0} color="secondary">
               <NotificationsIcon />
@@ -273,7 +271,7 @@ export default function MenuAppBar() {
               </Menu>
             </div>
           )}
-          {renderSidebar}
+          {/*renderSidebar*/}
         </Toolbar>
       </AppBar>
     </div>

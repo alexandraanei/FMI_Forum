@@ -12,6 +12,7 @@ import {
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import classes from "./AdminPanel.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function ThreadItem(props) {
   const { index, setThreads } = props;
@@ -22,6 +23,10 @@ export default function ThreadItem(props) {
     axios.delete(`/api/thread/${id}`);
     console.log(id);
     setThreads(id);
+    AlertStore.showSnackbar({
+      message: "Postarea a fost stearsa.",
+      type: "success",
+    });
     history.push("/admin");
   };
 
@@ -29,6 +34,10 @@ export default function ThreadItem(props) {
     try {
       await axios.put("/api/thread/approve/" + id);
       setThreads(id);
+      AlertStore.showSnackbar({
+        message: "Postarea a fost aprobata.",
+        type: "success",
+      });
       history.push("/admin");
     } catch (err) {
       console.log(err.response.data.message);

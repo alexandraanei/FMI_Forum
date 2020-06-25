@@ -10,6 +10,7 @@ import {
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import classes from "./AdminPanel.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function CategoryItem(props) {
   const { index, setCategories } = props;
@@ -20,9 +21,12 @@ export default function CategoryItem(props) {
 
   const handleDeleteCategory = (id) => {
     axios.delete(`/api/category/${id}`);
-    console.log(id);
     setCategories(id);
     history.push("/admin");
+    AlertStore.showSnackbar({
+      message: "Subforumul a fost sters.",
+      type: "success",
+    });
   };
 
   const handleEditCategory = async (id) => {
@@ -30,6 +34,10 @@ export default function CategoryItem(props) {
     category.title = categoryName === "" ? category.title : categoryName;
     try {
         await axios.put("/api/category/" + id + "/edit", { name: category.title });
+        AlertStore.showSnackbar({
+          message: "Subforum modificat cu succes.",
+          type: "success",
+        });
     } catch (err) {
         console.log(err.response.data.message);
     }

@@ -7,6 +7,7 @@ import { Avatar, Button, TextField } from "@material-ui/core";
 import FileUpload from '@material-ui/icons/AddPhotoAlternate';
 import AuthContext from "../../Contexts/AuthContext";
 import CreateIcon from "@material-ui/icons/Create";
+import AlertStore from "../../Stores/AlertStore";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -68,6 +69,10 @@ export default function ShowProfile() {
         try {
             await axios.put("/api/profile/" + id + "/edit", formData);
             history.push('/profile/' + id);
+            AlertStore.showSnackbar({
+                message: "Profil modificat cu succes.",
+                type: "success",
+              });
         } catch (err) {
             console.log(err.response.data.message);
         }

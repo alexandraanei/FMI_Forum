@@ -37,7 +37,7 @@ const upload = multer({
 });
 
 router.post("/create", upload.array("files", 10), async (req, res) => {
-  const { title, content, userId, forumId } = req.body;
+  const { title, content, userId, forumId, deadline } = req.body;
   const url = req.protocol + "://" + req.get("host");
   var filesArray = [];
   var photosArray = [];
@@ -56,7 +56,6 @@ router.post("/create", upload.array("files", 10), async (req, res) => {
       }
     }
   }
-  console.log(filesArray, photosArray);
   let newThread = Thread({
     title,
     files: filesArray,
@@ -66,6 +65,7 @@ router.post("/create", upload.array("files", 10), async (req, res) => {
     forumId,
     userId,
     approved: false,
+    deadline,
   });
 
   newThread.save(function (err, thread) {
@@ -102,6 +102,20 @@ router.get("/forum/:id", async (req, res) => {
     forumId: req.params.id,
     approved: true,
   }).populate("userId");
+  res.send(threads);
+});
+
+router.get("/deadlines/:id", async (req, res) => {
+  console.log("ok");
+  // const threads = await Thread.find({ deadline: {$ne:(null)} });
+
+  const threads = await Thread.find({
+    deadline: { $exists: true },
+    $expr: { $eq: [{ $strLenCP: "$deadline" }, 10] }
+  });
+
+  console.log(threads);
+
   res.send(threads);
 });
 

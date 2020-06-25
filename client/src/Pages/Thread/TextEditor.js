@@ -18,7 +18,7 @@ import {
 } from "draft-js-buttons";
 import classes from "./TextEditor.module.scss";
 import "draft-js-static-toolbar-plugin/lib/plugin.css";
-import { Button, FormHelperText } from "@material-ui/core";
+import { Button, FormHelperText, TextField } from "@material-ui/core";
 import FileUpload from "@material-ui/icons/AddPhotoAlternate";
 
 class HeadlinesPicker extends Component {
@@ -76,11 +76,18 @@ export default class TextEditor extends Component {
   state = {
     editorState: createEditorStateWithText(text),
     uploadFiles: [],
+    deadline: null,
   };
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    this.props.onChangeContent(stateToHTML(editorState.getCurrentContent()), this.state.uploadFiles);
+    console.log(this.state.deadline)
+    this.props.onChangeContent(
+      stateToHTML(editorState.getCurrentContent()),
+      this.state.uploadFiles,
+      this.state.deadline,
+    );
+    console.log(this.state.deadline);
   };
 
   focus = () => {
@@ -88,7 +95,6 @@ export default class TextEditor extends Component {
   };
 
   onChangeHandler = (e) => {
-    console.log(e.target.files);
     this.setState({ uploadFiles: e.target.files });
   };
 
@@ -122,34 +128,48 @@ export default class TextEditor extends Component {
             )
           }
         </Toolbar>
-        <FormHelperText id="component-helper-text" >
-          Incarca fisiere...
-        </FormHelperText>
-        <input
-          // accept="image/*"
-          multiple
-          onChange={this.onChangeHandler}
-          className={classes.input}
-          id="icon-button-file"
-          type="file"
+        <div style={{ marginTop: 5 }}>
+          <FormHelperText id="component-helper-text">
+            Incarca fisiere...
+          </FormHelperText>
+          <input
+            // accept="image/*"
+            multiple
+            onChange={this.onChangeHandler}
+            className={classes.input}
+            id="icon-button-file"
+            type="file"
+          />
+          <label htmlFor="icon-button-file">
+            <Button
+              variant="contained"
+              component="span"
+              className={classes.button}
+            >
+              <FileUpload />
+              &nbsp;Incarca
+            </Button>
+          </label>
+          <span className={classes.filename}>
+            {this.state.uploadFiles.length > 0
+              ? this.state.uploadFiles.length === 1
+                ? this.state.uploadFiles[0].name
+                : `${this.state.uploadFiles.length} files`
+              : ""}
+          </span>
+        </div>
+        <TextField
+          id="date"
+          style={{ marginTop: 10 }}
+          label="Seteaza deadline"
+          type="date"
+          // defaultValue={null}
+          onChange={(e) => this.setState({ deadline: e.target.value })}
+          className={classes.textField}
+          InputLabelProps={{
+            shrink: true,
+          }}
         />
-        <label htmlFor="icon-button-file">
-          <Button
-            variant="contained"
-            component="span"
-            className={classes.button}
-          >
-            <FileUpload />
-            &nbsp;Incarca
-          </Button>
-        </label>
-        <span className={classes.filename}>
-          {this.state.uploadFiles.length > 0
-            ? this.state.uploadFiles.length === 1
-              ? this.state.uploadFiles[0].name
-              : `${this.state.uploadFiles.length} files`
-            : ""}
-        </span>
       </div>
     );
   }

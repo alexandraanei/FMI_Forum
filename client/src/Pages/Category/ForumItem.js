@@ -14,6 +14,7 @@ import AddAlertIcon from "@material-ui/icons/AddAlert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import classes from "./ForumItem.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function ForumItem(props) {
   const { user } = useContext(AuthContext);
@@ -24,6 +25,10 @@ export default function ForumItem(props) {
 
   const handleDeleteForum = () => {
     axios.delete(`/api/forum/${forum._id}`);
+    AlertStore.showSnackbar({
+      message: "Forum sters cu succes.",
+      type: "success",
+    });
     history.push(`/category/${forum.categoryId}`);
   };
 
@@ -32,6 +37,10 @@ export default function ForumItem(props) {
     forum.title = forumName === "" ? forum.title : forumName;
     try {
       await axios.put("/api/forum/" + id + "/edit", { title: forum.title });
+      AlertStore.showSnackbar({
+        message: "Forum editat cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -46,6 +55,10 @@ export default function ForumItem(props) {
       await axios.put(`/api/user/subscribeforum/${user._id}`, {
         forum: id,
       });
+      AlertStore.showSnackbar({
+        message: "Te-ai abonat cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -56,6 +69,10 @@ export default function ForumItem(props) {
     try {
       await axios.put(`/api/user/unsubscribeforum/${user._id}`, {
         forum: id,
+      });
+      AlertStore.showSnackbar({
+        message: "Te-ai dezabonat cu succes.",
+        type: "success",
       });
     } catch (err) {
       console.log(err.response);

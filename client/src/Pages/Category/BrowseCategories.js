@@ -18,6 +18,7 @@ import AddAlertIcon from "@material-ui/icons/AddAlert";
 import AddIcon from "@material-ui/icons/Add";
 import AuthContext from "../../Contexts/AuthContext";
 import classes from "./BrowseCategories.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export const useStyles = makeStyles(() => ({
   root: {
@@ -83,6 +84,10 @@ export default function BrowseCategories() {
       await axios.put(`/api/user/subscribecategory/${user._id}`, {
         category: id,
       });
+      AlertStore.showSnackbar({
+        message: "Te-ai abonat.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -93,6 +98,10 @@ export default function BrowseCategories() {
     try {
       await axios.put(`/api/user/unsubscribecategory/${user._id}`, {
         category: id,
+      });
+      AlertStore.showSnackbar({
+        message: "Te-ai dezabonat.",
+        type: "success",
       });
     } catch (err) {
       console.log(err.response);

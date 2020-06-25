@@ -15,6 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import StarIcon from "@material-ui/icons/Star";
 import classes from "./ThreadItem.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function ThreadItem(props) {
   const { user } = useContext(AuthContext);
@@ -25,6 +26,10 @@ export default function ThreadItem(props) {
 
   const handleDeleteThread = () => {
     axios.delete(`/api/thread/${thread._id}`);
+    AlertStore.showSnackbar({
+      message: "Postarea a fost stearsa.",
+      type: "success",
+    });
     history.push(`/forum/${thread.forumId}`);
   };
 
@@ -32,6 +37,10 @@ export default function ThreadItem(props) {
     try {
       await axios.put(`/api/forum/addtopinned/${thread.forumId}`, {
         thread: thread._id,
+      });
+      AlertStore.showSnackbar({
+        message: "Postarea a fost fixata.",
+        type: "success",
       });
     } catch (err) {
       console.log(err.response);
@@ -44,6 +53,10 @@ export default function ThreadItem(props) {
       await axios.put(`/api/forum/removepinned/${thread.forumId}`, {
         thread: thread._id,
       });
+      AlertStore.showSnackbar({
+        message: "Postarea a fost stearsa dintre cele fixate.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -55,6 +68,10 @@ export default function ThreadItem(props) {
     thread.title = threadName === "" ? thread.title : threadName;
     try {
       await axios.put("/api/thread/" + id + "/edit", { title: thread.title });
+      AlertStore.showSnackbar({
+        message: "Titlul postarii a fost modificat.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -69,6 +86,10 @@ export default function ThreadItem(props) {
       await axios.put(`/api/user/subscribepost/${user._id}`, {
         post: id,
       });
+      AlertStore.showSnackbar({
+        message: "Te-ai abonat cu succes.",
+        type: "success",
+      });
     } catch (err) {
       console.log(err.response);
     }
@@ -79,6 +100,10 @@ export default function ThreadItem(props) {
     try {
       await axios.put(`/api/user/unsubscribepost/${user._id}`, {
         post: id,
+      });
+      AlertStore.showSnackbar({
+        message: "Te-ai dezabonat cu succes.",
+        type: "success",
       });
     } catch (err) {
       console.log(err.response);

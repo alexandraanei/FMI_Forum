@@ -16,6 +16,7 @@ export default function CreateThread () {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
@@ -30,6 +31,7 @@ export default function CreateThread () {
     data.append("content", content);
     data.append("userId", user._id);
     data.append("forumId", id);
+    data.append("deadline", deadline);
 
     console.log(...data);
 
@@ -45,9 +47,10 @@ export default function CreateThread () {
     }
   };
 
-  const onChangeContent = (content, files) => {
+  const onChangeContent = (content, files, deadline) => {
     setContent(content);
     setFiles(files);
+    setDeadline(deadline);
   };
 
   return (
@@ -63,7 +66,7 @@ export default function CreateThread () {
       </Button>
       <h1 style={{ marginBottom: "2rem" }}>Postare noua</h1>
 
-      <form onSubmit={handleOnSubmit} enctype="multipart/form-data">
+      <form onSubmit={handleOnSubmit} encType="multipart/form-data">
         <TextField
           label="Titlu"
           required

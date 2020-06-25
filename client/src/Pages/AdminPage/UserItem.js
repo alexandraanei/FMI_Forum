@@ -12,6 +12,7 @@ import {
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
 import classes from "./AdminPanel.module.scss";
+import AlertStore from "../../Stores/AlertStore";
 
 export default function AdminPanel(props) {
   const { index } = props;
@@ -22,6 +23,10 @@ export default function AdminPanel(props) {
 
   const handleDeleteUser = (id) => {
     axios.delete(`/api/profile/${id}`);
+    AlertStore.showSnackbar({
+      message: "Userul a fost sters.",
+      type: "success",
+    });
     history.push("/admin");
   };
 
@@ -33,6 +38,10 @@ export default function AdminPanel(props) {
       const data = { type: userRole };
       try {
         await axios.put("/api/user/" + id + "/edit", data);
+        AlertStore.showSnackbar({
+          message: "Rolul utilizatorului a fost modificat.",
+          type: "success",
+        });
       } catch (err) {
         console.log(err.response.data.message);
       }
