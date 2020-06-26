@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import validator from "validator";
 import axios from "axios";
-
 import {
   Avatar,
   Button,
@@ -53,12 +52,12 @@ export default function Register() {
     let errors = 0;
 
     if (!validator.isEmail(email)) {
-      setEmailError("Email must be in correct format");
+      setEmailError("Adresa e-mail trebuie sa aiba formatul corect.");
       errors++;
     }
 
     if (password !== passwordConfirmation) {
-      setPasswordError("Passwords don't match.");
+      setPasswordError("Parolele nu coincid.");
       errors++;
     }
 
@@ -79,10 +78,7 @@ export default function Register() {
     } catch (e) {
       const message = e.response.data.message;
       if (message === "email_exists") {
-        setEmailError("User with this email already exists");
-        // setMessage("ser with this email already exists");
-        // setOpen(true);
-        // setSeverity("error");
+        setEmailError("Exista deja user inregistrat cu aceast e-mail.");
       }
     }
   };

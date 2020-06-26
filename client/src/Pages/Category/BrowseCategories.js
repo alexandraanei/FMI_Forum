@@ -1,36 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import RenderCategory from "./RenderCategory";
 import {
   Divider,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  Typography,
-  ExpansionPanelDetails,
   Button,
-  IconButton,
-  Tooltip,
 } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AddAlertIcon from "@material-ui/icons/AddAlert";
 import AddIcon from "@material-ui/icons/Add";
 import AuthContext from "../../Contexts/AuthContext";
-import classes from "./BrowseCategories.module.scss";
-import AlertStore from "../../Stores/AlertStore";
-
-export const useStyles = makeStyles(() => ({
-  root: {
-    backgroundColor: "#f0f2ff",
-  },
-}));
 
 export default function BrowseCategories() {
   const [categories, setCategories] = useState([]);
   const { user } = useContext(AuthContext);
   const history = useHistory();
-  const root = useStyles();
 
   // useEffect(() => {
   //     let unmounted = false;
@@ -74,41 +56,6 @@ export default function BrowseCategories() {
     });
   };
 
-  const handleCategoryOnClick = (event, id) => {
-    event.stopPropagation();
-    history.push(`/category/${id}`);
-  };
-
-  const handleSubscribe = async (id) => {
-    try {
-      await axios.put(`/api/user/subscribecategory/${user._id}`, {
-        category: id,
-      });
-      AlertStore.showSnackbar({
-        message: "Te-ai abonat.",
-        type: "success",
-      });
-    } catch (err) {
-      console.log(err.response);
-    }
-    history.push("/category");
-  };
-
-  const handleUnsubscribe = async (id) => {
-    try {
-      await axios.put(`/api/user/unsubscribecategory/${user._id}`, {
-        category: id,
-      });
-      AlertStore.showSnackbar({
-        message: "Te-ai dezabonat.",
-        type: "success",
-      });
-    } catch (err) {
-      console.log(err.response);
-    }
-    history.push("/category");
-  };
-
   return (
     <div style={{ padding: "2rem" }}>
       {user?.type === "admin" && (
@@ -125,69 +72,7 @@ export default function BrowseCategories() {
         </React.Fragment>
       )}
       {categories.map((cat, index) => (
-        <ExpansionPanel
-          defaultExpanded={
-            user?.subscribedCategories.includes(cat._id) ||
-            user?.subscribedCategories.length === 0 ||
-            !user
-          }
-          key={index}
-          classes={root}
-        >
-          <ExpansionPanelSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-label="Expand"
-            aria-controls={`${cat.title}-content`}
-            id={`${cat.title}-header`}
-            className={classes.panel}
-          >
-            <Typography
-              aria-label={`${cat.title}-typo`}
-              onClick={(event) => handleCategoryOnClick(event, cat._id)}
-              onFocus={(event) => event.stopPropagation()}
-              style={{
-                fontWeight: "bold",
-                color: "#3f51b5",
-                textShadow: "0.2px 0.2px",
-              }}
-            >
-              {cat.title}
-            </Typography>
-            <div style={{ flexGrow: 1 }} />
-            {user?.type === 'user' && (
-              <Tooltip
-                title={
-                  user?.subscribedCategories.includes(cat._id)
-                    ? "Dezaboneaza-te"
-                    : "Aboneaza-te"
-                }
-                aria-label="subscribe"
-              >
-                <IconButton
-                  variant="contained"
-                  color={
-                    user?.subscribedCategories.includes(cat._id)
-                      ? "primary"
-                      : "default"
-                  }
-                  size="small"
-                  className={classes.button}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    user?.subscribedCategories.includes(cat._id)
-                      ? handleUnsubscribe(cat._id)
-                      : handleSubscribe(cat._id);
-                  }}
-                >
-                  <AddAlertIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <RenderCategory id={cat._id} />
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+        <RenderCategory key={index} category={cat} index={index} />
       ))}
     </div>
   );

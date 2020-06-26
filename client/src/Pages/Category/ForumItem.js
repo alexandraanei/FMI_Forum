@@ -22,6 +22,7 @@ export default function ForumItem(props) {
   const history = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const [forumName, setForumName] = useState("");
+  const [subscribed, setSubscribed] = useState(user?.subscribedForums.includes(forum._id));
 
   const handleDeleteForum = () => {
     axios.delete(`/api/forum/${forum._id}`);
@@ -55,6 +56,7 @@ export default function ForumItem(props) {
       await axios.put(`/api/user/subscribeforum/${user._id}`, {
         forum: id,
       });
+      setSubscribed(true);
       AlertStore.showSnackbar({
         message: "Te-ai abonat cu succes.",
         type: "success",
@@ -62,7 +64,6 @@ export default function ForumItem(props) {
     } catch (err) {
       console.log(err.response);
     }
-    history.push("/category");
   };
 
   const handleUnsubscribe = async (id) => {
@@ -70,6 +71,7 @@ export default function ForumItem(props) {
       await axios.put(`/api/user/unsubscribeforum/${user._id}`, {
         forum: id,
       });
+      setSubscribed(false);
       AlertStore.showSnackbar({
         message: "Te-ai dezabonat cu succes.",
         type: "success",
@@ -77,7 +79,6 @@ export default function ForumItem(props) {
     } catch (err) {
       console.log(err.response);
     }
-    history.push("/category");
   };
 
   return (
@@ -145,7 +146,7 @@ export default function ForumItem(props) {
         <React.Fragment>
           <Tooltip
             title={
-              user?.subscribedForums.includes(forum._id)
+              subscribed
                 ? "Dezaboneaza-te"
                 : "Aboneaza-te"
             }
@@ -155,14 +156,14 @@ export default function ForumItem(props) {
               variant="contained"
               className={classes.button}
               color={
-                user?.subscribedForums.includes(forum._id)
+                subscribed
                   ? "primary"
                   : "default"
               }
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                user?.subscribedForums.includes(forum._id)
+                subscribed
                   ? handleUnsubscribe(forum._id)
                   : handleSubscribe(forum._id);
               }}

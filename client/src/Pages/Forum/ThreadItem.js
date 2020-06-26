@@ -23,6 +23,7 @@ export default function ThreadItem(props) {
   const history = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const [threadName, setThreadName] = useState("");
+  const [subscribed, setSubscribed] = useState(user?.subscribedThreads.includes(thread._id));
 
   const handleDeleteThread = () => {
     axios.delete(`/api/thread/${thread._id}`);
@@ -86,6 +87,7 @@ export default function ThreadItem(props) {
       await axios.put(`/api/user/subscribepost/${user._id}`, {
         post: id,
       });
+      setSubscribed(true);
       AlertStore.showSnackbar({
         message: "Te-ai abonat cu succes.",
         type: "success",
@@ -101,6 +103,7 @@ export default function ThreadItem(props) {
       await axios.put(`/api/user/unsubscribepost/${user._id}`, {
         post: id,
       });
+      setSubscribed(false);
       AlertStore.showSnackbar({
         message: "Te-ai dezabonat cu succes.",
         type: "success",
@@ -195,7 +198,7 @@ export default function ThreadItem(props) {
         <React.Fragment>
           <Tooltip
             title={
-              user?.subscribedThreads.includes(thread._id)
+              subscribed
                 ? "Dezaboneaza-te"
                 : "Aboneaza-te"
             }
@@ -205,14 +208,14 @@ export default function ThreadItem(props) {
               variant="contained"
               className={classes.button}
               color={
-                user?.subscribedThreads.includes(thread._id)
+                subscribed
                   ? "primary"
                   : "default"
               }
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                user?.subscribedThreads.includes(thread._id)
+                subscribed
                   ? handleUnsubscribe(thread._id)
                   : handleSubscribe(thread._id);
               }}

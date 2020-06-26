@@ -60,9 +60,9 @@ export default function SignIn() {
         } catch (e) {
             const message = e.response.data.message;
             if (message === 'user_not_found') {
-                setEmailError('No users with this email were found');
+                setEmailError('Nu s-au gasit membri cu acest e-mail');
             } else if (message === 'wrong_password') {
-                setPasswordError('Wrong password')
+                setPasswordError('Parola gresita')
             }
         }
     };

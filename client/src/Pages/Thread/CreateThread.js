@@ -17,6 +17,7 @@ export default function CreateThread () {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [privatePost, setPrivatePost] = useState(false);
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
@@ -32,6 +33,7 @@ export default function CreateThread () {
     data.append("userId", user._id);
     data.append("forumId", id);
     data.append("deadline", deadline);
+    data.append("private", privatePost);
 
     console.log(...data);
 
@@ -47,10 +49,11 @@ export default function CreateThread () {
     }
   };
 
-  const onChangeContent = (content, files, deadline) => {
+  const onChangeContent = (content, files, deadline, privatePost) => {
     setContent(content);
     setFiles(files);
     setDeadline(deadline);
+    setPrivatePost(privatePost);
   };
 
   return (

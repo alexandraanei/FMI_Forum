@@ -37,7 +37,7 @@ const upload = multer({
 });
 
 router.post("/create", upload.array("files", 10), async (req, res) => {
-  const { title, content, userId, forumId, deadline } = req.body;
+  const { title, content, userId, forumId, deadline, private } = req.body;
   const url = req.protocol + "://" + req.get("host");
   var filesArray = [];
   var photosArray = [];
@@ -66,6 +66,7 @@ router.post("/create", upload.array("files", 10), async (req, res) => {
     userId,
     approved: false,
     deadline,
+    private,
   });
 
   newThread.save(function (err, thread) {

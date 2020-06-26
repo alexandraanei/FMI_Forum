@@ -18,7 +18,13 @@ import {
 } from "draft-js-buttons";
 import classes from "./TextEditor.module.scss";
 import "draft-js-static-toolbar-plugin/lib/plugin.css";
-import { Button, FormHelperText, TextField } from "@material-ui/core";
+import {
+  Button,
+  FormHelperText,
+  TextField,
+  Switch,
+  FormControlLabel,
+} from "@material-ui/core";
 import FileUpload from "@material-ui/icons/AddPhotoAlternate";
 
 class HeadlinesPicker extends Component {
@@ -76,16 +82,22 @@ export default class TextEditor extends Component {
   state = {
     editorState: createEditorStateWithText(text),
     uploadFiles: [],
+    hasDeadline: false,
     deadline: null,
+    privatePost: false,
   };
+
+  // componentDidMount() {
+  //   this.setState({ deadline: this.yyyymmdd(new Date()) });
+  // }
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    console.log(this.state.deadline)
     this.props.onChangeContent(
       stateToHTML(editorState.getCurrentContent()),
       this.state.uploadFiles,
       this.state.deadline,
+      this.state.privatePost,
     );
     console.log(this.state.deadline);
   };
@@ -96,6 +108,32 @@ export default class TextEditor extends Component {
 
   onChangeHandler = (e) => {
     this.setState({ uploadFiles: e.target.files });
+  };
+
+  handleToggle = (type) => {
+    if (type === "private") {
+      this.setState((state) => ({ privatePost: !state.privatePost }));
+    } else {
+      this.setState((state) => ({
+        deadline: state.hasDeadline ? null : this.yyyymmdd(new Date()),
+        hasDeadline: !state.hasDeadline,
+      }));
+    }
+  };
+
+  yyyymmdd = (date) => {
+    var mm = date.getMonth() + 1; // getMonth() is zero-based
+    var dd = date.getDate();
+
+    return (
+      date.getFullYear() +
+      "-" +
+      (mm > 9 ? "" : "0") +
+      mm +
+      "-" +
+      (dd > 9 ? "" : "0") +
+      dd
+    );
   };
 
   render() {
@@ -128,12 +166,45 @@ export default class TextEditor extends Component {
             )
           }
         </Toolbar>
+        <div style={{ marginTop: 20 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={this.state.privatePost}
+                onChange={() => this.handleToggle("private")}
+              />
+            }
+            label="Postare privata?"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={this.state.hasDeadline}
+                onChange={() => this.handleToggle("deadline")}
+              />
+            }
+            label="Setati termen limita?"
+          />
+          <TextField
+            id="date"
+            style={{ opacity: this.state.hasDeadline ? 1 : 0, marginTop: -10 }}
+            label="Seteaza deadline"
+            type="date"
+            defaultValue={this.yyyymmdd(new Date())}
+            onChange={(e) => this.setState({ deadline: e.target.value })}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </div>
         <div style={{ marginTop: 5 }}>
           <FormHelperText id="component-helper-text">
             Incarca fisiere...
           </FormHelperText>
           <input
-            // accept="image/*"
             multiple
             onChange={this.onChangeHandler}
             className={classes.input}
@@ -158,18 +229,6 @@ export default class TextEditor extends Component {
               : ""}
           </span>
         </div>
-        <TextField
-          id="date"
-          style={{ marginTop: 10 }}
-          label="Seteaza deadline"
-          type="date"
-          // defaultValue={null}
-          onChange={(e) => this.setState({ deadline: e.target.value })}
-          className={classes.textField}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
       </div>
     );
   }

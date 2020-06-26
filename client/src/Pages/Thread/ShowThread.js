@@ -75,6 +75,7 @@ export default function ShowThread() {
   const { id } = useParams();
 
   useEffect(() => {
+
     getThread();
     getPosts(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,7 +83,7 @@ export default function ShowThread() {
 
   const getThread = async () => {
     const response = await axios.get("/api/thread/" + id);
-    console.log(response.data);
+    if(response?.data.private === 'true' && !user) { history.push("/"); }
     setThread(response.data);
     setLike(user !== null ? response.data.likedBy.includes(user?._id) : false);
     setLikesLength(response.data.likedBy.length);
@@ -346,10 +347,11 @@ export default function ShowThread() {
                 <CardContent classes={{ root: classes.replyContent }}>
                   {thread.files.length > 0 && (
                     <div>
+                    {console.log(thread.files)}
                       Fisiere atasate:
                       {thread.files.map((file, index) => (
                         <div key={index}>
-                          <Link href={file}>{file} </Link>
+                          <Link href={file}>{file.slice(51)} </Link>
                         </div>
                       ))}
                     </div>

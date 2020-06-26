@@ -12,6 +12,7 @@ const ThreadSchema = new Schema({
     files: { type: [String], required: false },
     photos: { type: [String], required: false },
     deadline: { type: String, required: false },
+    private: { type: String, required: false },
 });
 
 const Thread = mongoose.model('Thread', ThreadSchema);
