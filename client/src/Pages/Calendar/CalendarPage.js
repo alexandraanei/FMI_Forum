@@ -3,56 +3,61 @@ import AuthContext from "../../Contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { List, Divider, Button } from "@material-ui/core";
-import { Calendar, Badge } from 'antd';
-import classes from './CalendarPage.module.scss';
+import { Calendar, Badge } from "antd";
+import classes from "./CalendarPage.module.scss";
 
 export default function CalendarPage() {
   const history = useHistory();
   const { user } = useContext(AuthContext);
   const id = user._id;
-  const [deadlines, setDeadlines] = useState([]);
+  const [threadsWithDeadline, setThreadsWithDeadline] = useState([]);
 
   useEffect(() => {
-    getDeadlines();
+    getThreadsWithDeadline();
   }, []);
 
-  const getDeadlines = async () => {
-    const data = { user }
+  const getThreadsWithDeadline = async () => {
     try {
       const response = await axios.get("/api/thread/deadlines/" + id);
-      setDeadlines(response.data);
+      setThreadsWithDeadline(response.data);
+      console.log(response.data);
     } catch (err) {
       console.log(err.response.data.message);
     }
   };
 
-  const getListData = (value) => {
-    let listData;
-    console.log(value);
-    console.log(deadlines);
-    switch (value.date()) {
-      case 8:
-        listData = [
-          { type: 'error', content: 'This is warning event.' },
-          { type: 'error', content: 'This is usual event.' },
-        ];
-        break;
-      case 10:
-        listData = [
-          { type: 'error', content: 'This is error event.' },
-        ];
-        break;
-      
-      default:
-    }
+  const yyyymmdd = (date) => {
+    var mm = date.getMonth() + 1; // getMonth() is zero-based
+    var dd = date.getDate();
+
+    return (
+      date.getFullYear() +
+      "-" +
+      (mm > 9 ? "" : "0") +
+      mm +
+      "-" +
+      (dd > 9 ? "" : "0") +
+      dd
+    );
+  };
+
+  function getListData(value) {
+    let listData = [];
+    const calendarDate = yyyymmdd(value._d);
+    console.log(threadsWithDeadline)
+
+    threadsWithDeadline.forEach(thread => {
+      if(thread.deadline === calendarDate)
+      listData.push({ type: "error", content: thread.title })
+    });
     return listData || [];
   }
-  
-  const dateCellRender = value => {
+
+  function dateCellRender(value) {
     const listData = getListData(value);
     return (
       <ul className={classes.events}>
-        {listData.map(item => (
+        {listData.map((item) => (
           <li key={item.content}>
             <Badge status={item.type} text={item.content} />
           </li>
@@ -64,9 +69,10 @@ export default function CalendarPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Calendar</h1>
-      
-      <Calendar dateCellRender={dateCellRender} />
-      
+
+      <Calendar
+        dateCellRender={dateCellRender}
+      />
     </div>
   );
 }

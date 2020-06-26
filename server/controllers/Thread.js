@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Thread = require("../models/Thread");
+const User = require("../models/User");
 const multer = require("multer");
 
 const DIR = "./uploads/threads";
@@ -13,20 +14,6 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + file.originalname.toLowerCase().split(" ").join("-"));
   },
 });
-
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg"
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-    return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
-  }
-};
 
 const upload = multer({
   storage: storage,
@@ -107,15 +94,13 @@ router.get("/forum/:id", async (req, res) => {
 });
 
 router.get("/deadlines/:id", async (req, res) => {
-  console.log("ok");
-  // const threads = await Thread.find({ deadline: {$ne:(null)} });
-
-  const threads = await Thread.find({
+  var threads = await Thread.find({
     deadline: { $exists: true },
     $expr: { $eq: [{ $strLenCP: "$deadline" }, 10] }
   });
 
-  console.log(threads);
+  const user = await User.findById(req.params.id);
+  threads = threads.filter(thread => user.subscribedThreads.includes(thread._id));
 
   res.send(threads);
 });
