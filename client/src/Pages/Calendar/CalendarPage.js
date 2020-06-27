@@ -27,7 +27,7 @@ export default function CalendarPage() {
   };
 
   const yyyymmdd = (date) => {
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
+    var mm = date.getMonth() + 1;
     var dd = date.getDate();
 
     return (

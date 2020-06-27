@@ -47,6 +47,7 @@ const CreateCategory = () => {
           fullWidth
           margin="normal"
           value={title}
+          style={{ marginBottom: 40 }}
           onChange={(e) => setTitle(e.target.value)}
         />
         <Button

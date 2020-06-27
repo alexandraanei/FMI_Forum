@@ -67,7 +67,6 @@ export default function ThreadItem(props) {
           size="small"
           className={classNames(classes.button, classes.approveButton)}
           style={{ marginRight: 5, background: '#76e676' }}
-          // classes={{ root: {  } }}
           onClick={(e) => {
             e.stopPropagation();
             handleApproveThread(thread._id);

@@ -346,7 +346,6 @@ export default function ShowThread() {
                     ))}
                   </Carousel>
                 )}
-
                 <CardContent classes={{ root: classes.replyContent }}>
                   {thread.files.length > 0 && (
                     <div>

@@ -21,7 +21,6 @@ const upload = multer({
   limits: {
     fileSize: 1024 * 1024 * 25,
   },
-  // fileFilter: fileFilter,
 });
 
 router.post("/create", upload.array("files", 10), async (req, res) => {

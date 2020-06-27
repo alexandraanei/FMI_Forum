@@ -24,7 +24,7 @@ export const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function RenderCategory(props) {
+export default function CategoryItem(props) {
   const { user } = useContext(AuthContext);
   const { category, index } = props;
   const history = useHistory();

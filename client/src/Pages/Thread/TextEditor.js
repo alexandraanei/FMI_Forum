@@ -113,7 +113,7 @@ export default class TextEditor extends Component {
   };
 
   yyyymmdd = (date) => {
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
+    var mm = date.getMonth() + 1;
     var dd = date.getDate();
 
     return (

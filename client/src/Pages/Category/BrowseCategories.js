@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import RenderCategory from "./RenderCategory";
+import CategoryItem from "./CategoryItem";
 import {
   Divider,
   Button,
@@ -72,7 +72,7 @@ export default function BrowseCategories() {
         </React.Fragment>
       )}
       {categories.map((cat, index) => (
-        <RenderCategory key={index} category={cat} index={index} />
+        <CategoryItem key={index} category={cat} index={index} />
       ))}
     </div>
   );
