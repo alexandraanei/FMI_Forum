@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import 'antd/dist/antd.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import "antd/dist/antd.css";
 import AuthContext from "./Contexts/AuthContext";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import axios from "axios";
-import { Container, Paper } from '@material-ui/core';
+import { Container, Paper } from "@material-ui/core";
 import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home";
 import Login from "./Pages/Auth/Login";
@@ -33,9 +38,8 @@ function App() {
 
   const init = async () => {
     const token = localStorage.getItem("token");
-    if(token !== 'null')
-    {
-      const response = await axios.get('/api/auth/init', { params: { token } });
+    if (token !== "null") {
+      const response = await axios.get("/api/auth/init", { params: { token } });
       const { user } = response.data;
       setUser(user);
     }
@@ -50,63 +54,70 @@ function App() {
   return (
     <div>
       {isInitiated && (
-          <AuthContext.Provider value={{user, setUser, handleLogout}}>
-            <Router>
-              <Navbar />
-              <Container className="container" fixed maxWidth='xl' >
+        <AuthContext.Provider value={{ user, setUser, handleLogout }}>
+          <Router>
+            <Navbar />
+            <Container className="container" fixed maxWidth="xl">
               <Paper>
                 <Switch>
                   <Route path="/" exact>
-                    <Home/>
+                    <BrowseCategories />
+                  </Route>
+                  <Route path="/restricted" exact>
+                    <Home />
                   </Route>
                   <Route path="/auth/login">
-                    {!user ? <Login/> : <Redirect to="/"/>}
+                    {!user ? <Login /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/auth/register">
-                    {!user ? <Register/> : <Redirect to="/"/>}
+                    {!user ? <Register /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/category/create">
-                    {user ? <CreateCategory/> : <Redirect to="/auth/login"/>}
+                    {user ? <CreateCategory /> : <Redirect to="/auth/login" />}
                   </Route>
                   <Route path="/category/:id">
-                    <ShowCategory/>
+                    <ShowCategory />
                   </Route>
                   <Route path="/category">
-                    <BrowseCategories/>
+                    <BrowseCategories />
                   </Route>
                   <Route path="/forum/create/:id">
-                    {user ? <CreateForum/> : <Redirect to="/auth/login"/>}
+                    {user ? <CreateForum /> : <Redirect to="/auth/login" />}
                   </Route>
                   <Route path="/forum/:id">
-                    <ShowForum/>
+                    <ShowForum />
                   </Route>
                   <Route path="/thread/create/:id">
-                    {user ? <CreateThread/> : <Redirect to="/auth/login"/>}
+                    {user ? <CreateThread /> : <Redirect to="/auth/login" />}
                   </Route>
                   <Route path="/thread/:id">
-                    <ShowThread/>
+                    <ShowThread />
                   </Route>
                   <Route path="/profile/:id/edit">
-                    {user ? <EditProfile/> : <Redirect to="/"/>}
+                    {user ? <EditProfile /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/profile/:id">
-                    {user ? <ShowProfile/> : <Redirect to="/"/>}
+                    {user ? <ShowProfile /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/settings/">
-                    {user ? <SettingsPage/> : <Redirect to="/"/>}
+                    {user ? <SettingsPage /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/admin">
-                    {user?.type === 'admin' ? <AdminPanel/> : <Redirect to="/"/>}
+                    {user?.type === "admin" ? (
+                      <AdminPanel />
+                    ) : (
+                      <Redirect to="/restricted" />
+                    )}
                   </Route>
-                  <Route path="/calendar/">
-                    {user ? <CalendarPage/> : <Redirect to="/"/>}
+                  <Route path="/calendar">
+                    {user ? <CalendarPage /> : <Redirect to="/restricted" />}
                   </Route>
                 </Switch>
               </Paper>
-              </Container>
-            </Router>
-            <Alert key="alert" />
-          </AuthContext.Provider>
+            </Container>
+          </Router>
+          <Alert key="alert" />
+        </AuthContext.Provider>
       )}
     </div>
   );

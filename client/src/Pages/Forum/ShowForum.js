@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import Button from "@material-ui/core/Button";
+import classNames from 'classnames';
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../../Contexts/AuthContext";
-import { List, Divider } from "@material-ui/core";
+import { List, Divider, Button } from "@material-ui/core";
 import ThreadItem from "./ThreadItem";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import CreateIcon from '@material-ui/icons/Create';
+import CreateIcon from "@material-ui/icons/Create";
+import classes from "./ShowForum.module.scss";
 
 export default function ShowForum() {
   const history = useHistory();
@@ -14,6 +15,7 @@ export default function ShowForum() {
   const { user } = useContext(AuthContext);
   const [forum, setForum] = useState(null);
   const [threads, setThreads] = useState([]);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     getForum();
@@ -29,6 +31,7 @@ export default function ShowForum() {
   const getThreads = async () => {
     const response = await axios.get("/api/thread/forum/" + id);
     setThreads(response.data);
+    setMounted(true);
   };
 
   return (
@@ -52,26 +55,33 @@ export default function ShowForum() {
           Postare noua
         </Button>
       )}
-      {forum && <h1>{forum.title}</h1>}
+      <div className={classes.fixed}>
+        {forum && <h1>{forum.title}</h1>}
+        {forum?.pinnedPosts.length > 0 && (
+          <React.Fragment>
+          <div className={classes.border} />
+            <h3>Postari fixate</h3>
+            <List>
+              {threads.map(
+                (thread, index) =>
+                  forum?.pinnedPosts.includes(thread._id) && (
+                    <ThreadItem
+                      key={index}
+                      thread={thread}
+                      index={index}
+                      pinned
+                    />
+                  )
+              )}
+            </List>
+          </React.Fragment>
+        )}
+      </div>
       {forum?.pinnedPosts.length > 0 && (
-        <React.Fragment>
-          <h3>Postari fixate</h3>
-          <List>
-            {threads.map(
-              (thread, index) =>
-                forum?.pinnedPosts.includes(thread._id) && (
-                  <ThreadItem
-                    key={index}
-                    thread={thread}
-                    index={index}
-                    pinned
-                  />
-                )
-            )}
-          </List>
-          <Divider style={{ margin: "2rem 0" }} />
-        </React.Fragment>
+        <Divider style={{ margin: "15px 0" }} />
       )}
+      <div className={classNames(classes.fixed, classes.posts)}>
+      {(threads?.length === 0 && mounted)&& (<div style={{ marginBottom: -15 }}>Nu exista postari in acest forum.</div>)}
       <List>
         {threads.map(
           (thread, index) =>
@@ -80,6 +90,7 @@ export default function ShowForum() {
             )
         )}
       </List>
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ const ForumSchema = new Schema({
     createdAt: Date,
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
     pinnedPosts: { type: [Schema.Types.ObjectId], ref: 'Thread' },
+    lastUpdated: Date,
 });
 
 const Forum = mongoose.model('Forum', ForumSchema);

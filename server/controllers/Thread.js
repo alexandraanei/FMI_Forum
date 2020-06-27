@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Thread = require("../models/Thread");
 const User = require("../models/User");
+const Forum = require("../models/Forum");
 const multer = require("multer");
 
 const DIR = "./uploads/threads";
@@ -43,6 +44,16 @@ router.post("/create", upload.array("files", 10), async (req, res) => {
       }
     }
   }
+
+  Forum.findById(req.params.forumId).then((forum) => {
+    forum.lastUpdated = Date.now();
+
+    forum
+      .save()
+      .then(() => res.json("Forum updated!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
+
   let newThread = Thread({
     title,
     files: filesArray,
@@ -96,16 +107,34 @@ router.get("/forum/:id", async (req, res) => {
 router.get("/deadlines/:id", async (req, res) => {
   var threads = await Thread.find({
     deadline: { $exists: true },
-    $expr: { $eq: [{ $strLenCP: "$deadline" }, 10] }
+    $expr: { $eq: [{ $strLenCP: "$deadline" }, 10] },
   });
 
   const user = await User.findById(req.params.id);
-  threads = threads.filter(thread => user.subscribedThreads.includes(thread._id));
+  threads = threads.filter((thread) =>
+    user.subscribedThreads.includes(thread._id)
+  );
 
   res.send(threads);
 });
 
 router.put("/:id/edit", async (req, res) => {
+  // let forum = await Forum.findById(req.params.forumId);
+  // forum.lastUpdated = Date.now();
+  // forum.save()
+  //         .then(() => res.json('Forum updated!'))
+  //         .catch(err => res.status(400).json('Error: ' + err));
+  //     })
+
+  Forum.findById(req.params.forumId).then((forum) => {
+    forum.lastUpdated = Date.now();
+
+    forum
+      .save()
+      .then(() => res.json("Forum updated!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
+
   Thread.findById(req.params.id)
     .then((thread) => {
       thread.title = req.body.title;

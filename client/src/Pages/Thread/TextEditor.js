@@ -39,8 +39,6 @@ class HeadlinesPicker extends Component {
   }
 
   onWindowClick = () =>
-    // Call `onOverrideContent` again with `undefined`
-    // so the toolbar can show its regular content again.
     this.props.onOverrideContent(undefined);
 
   render() {
@@ -57,9 +55,6 @@ class HeadlinesPicker extends Component {
 
 class HeadlinesButton extends Component {
   onClick = () =>
-    // A button can call `onOverrideContent` to replace the content
-    // of the toolbar. This can be useful for displaying sub
-    // menus or requesting additional information from the user.
     this.props.onOverrideContent(HeadlinesPicker);
 
   render() {
@@ -86,10 +81,6 @@ export default class TextEditor extends Component {
     deadline: null,
     privatePost: false,
   };
-
-  // componentDidMount() {
-  //   this.setState({ deadline: this.yyyymmdd(new Date()) });
-  // }
 
   onChange = (editorState) => {
     this.setState({ editorState });
@@ -149,7 +140,6 @@ export default class TextEditor extends Component {
         />
         <Toolbar>
           {
-            // may be use React.Fragment instead of div to improve perfomance after React 16
             (externalProps) => (
               <React.Fragment>
                 <BoldButton {...externalProps} />

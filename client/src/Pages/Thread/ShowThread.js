@@ -75,7 +75,6 @@ export default function ShowThread() {
   const { id } = useParams();
 
   useEffect(() => {
-
     getThread();
     getPosts(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +82,9 @@ export default function ShowThread() {
 
   const getThread = async () => {
     const response = await axios.get("/api/thread/" + id);
-    if(response?.data.private === 'true' && !user) { history.push("/"); }
+    if (response?.data.private === "true" && !user) {
+      history.push("/restricted");
+    }
     setThread(response.data);
     setLike(user !== null ? response.data.likedBy.includes(user?._id) : false);
     setLikesLength(response.data.likedBy.length);
@@ -329,7 +330,9 @@ export default function ShowThread() {
                 <CardContent style={{ marginBottom: -20 }}>
                   <div dangerouslySetInnerHTML={{ __html: thread.content }} />
                 </CardContent>
-                {thread.deadline && <CardContent >Deadline: {thread.deadline}</CardContent>}
+                {thread.deadline && (
+                  <CardContent>Deadline: {thread.deadline}</CardContent>
+                )}
                 {thread.photos.length > 0 && (
                   <Carousel effect="fade" dotPosition="top">
                     {thread.photos.map((photo, index) => (
@@ -347,7 +350,7 @@ export default function ShowThread() {
                 <CardContent classes={{ root: classes.replyContent }}>
                   {thread.files.length > 0 && (
                     <div>
-                    {console.log(thread.files)}
+                      {console.log(thread.files)}
                       Fisiere atasate:
                       {thread.files.map((file, index) => (
                         <div key={index}>
@@ -390,11 +393,11 @@ export default function ShowThread() {
                     <div style={{ flexGrow: 1 }} />
                     {(user?.type === "admin" ||
                       user._id === thread.userId._id) && (
-                      <React.Fragment>
+                      <Tooltip title="Editeaza postarea">
                         <IconButton aria-label="edit">
                           <CreateIcon />
                         </IconButton>
-                      </React.Fragment>
+                      </Tooltip>
                     )}
                   </CardActions>
                 )}

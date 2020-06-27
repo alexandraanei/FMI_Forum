@@ -7,7 +7,8 @@ router.post('/create', async (req, res) => {
    const newForum = Forum({
        title,
        createdAt: Date.now(),
-       categoryId
+       categoryId,
+       lastUpdated: Date.now()
    });
 
    await newForum.save();
@@ -35,6 +36,7 @@ router.put('/:id/edit', async (req, res) => {
     Forum.findById(req.params.id)
     .then(forum => {
         forum.title = req.body.title;
+        forum.lastUpdated = Date.now();
   
         forum.save()
           .then(() => res.json('Forum updated!'))
@@ -53,6 +55,7 @@ router.put('/addtopinned/:id', async (req, res) => {
     Forum.findById(req.params.id)
     .then(forum => {
         forum.pinnedPosts.push(req.body.thread);
+        forum.lastUpdated = Date.now();
         forum.save()
           .then(() => res.json('Forum updated!'))
           .catch(err => res.status(400).json('Error: ' + err.response));
@@ -65,6 +68,7 @@ router.put('/removepinned/:id', async (req, res) => {
     Forum.findById(req.params.id)
     .then(forum => {
         forum.pinnedPosts.pull(req.body.thread);
+        forum.lastUpdated = Date.now();
         forum.save()
           .then(() => res.json('Forum updated!'))
           .catch(err => res.status(400).json('Error: ' + err.response));
