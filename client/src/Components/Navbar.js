@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import axios from "axios";
 import AuthContext from "../Contexts/AuthContext";
 import { useHistory } from "react-router-dom";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   AppBar,
   Toolbar,
@@ -31,49 +32,28 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  },
-  searchIcon: {
-    width: theme.spacing(7),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 7),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: 200,
-    },
-  },
-  drawer: {
-    width: 350,
-  },
   smallAvatar: {
     width: theme.spacing(4),
     height: theme.spacing(4),
   },
 }));
+
+const options = [
+  'None',
+  'Atria',
+  'Callisto',
+  'Dione',
+  'Ganymede',
+  'Hangouts Call',
+  'Luna',
+  'Oberon',
+  'Phobos',
+  'Pyxis',
+  'Sedna',
+  'Titania',
+  'Triton',
+  'Umbriel',
+];
 
 export default function MenuAppBar() {
   const history = useHistory();
@@ -81,7 +61,22 @@ export default function MenuAppBar() {
   const id = user && user._id;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorNot, setAnchorNot] = React.useState(null);
   const openMenu = Boolean(anchorEl);
+  const openNotifications = Boolean(anchorNot);
+  const [notifications, setNotifications] = React.useState([]);
+
+  useEffect(() => {
+    getNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const getNotifications = async () => {
+    const response = await axios.get("/api/notification/" + id);
+    setNotifications(response.data);
+    console.log(response.data);
+  };
 
   const logout = () => {
     handleClose();
@@ -91,6 +86,14 @@ export default function MenuAppBar() {
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleNotMenu = (event) => {
+    setAnchorNot(event.currentTarget);
+  };
+
+  const handleCloseNot = () => {
+    setAnchorNot(null);
   };
 
   const handleClose = () => {
@@ -143,11 +146,40 @@ export default function MenuAppBar() {
               >
                 <EventIcon />
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton onClick={handleNotMenu} color="inherit">
                 <Badge badgeContent={0} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
+              <Menu
+                id="notifications-menu"
+                anchorEl={anchorNot}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={openNotifications}
+                onClose={handleCloseNot}
+                PaperProps={{
+                  style: {
+                    maxHeight: 45 * 4.5,
+                    width: "20ch",
+                  },
+                }}
+              >
+                {notifications.map((option) => (
+                  <MenuItem
+                    key={notifications._id}
+                    onClick={handleClose}
+                  >
+                    {notifications.content}
+                  </MenuItem>
+                ))}
+              </Menu>
             </React.Fragment>
           )}
           {user?.type === "admin" && (
@@ -208,6 +240,7 @@ export default function MenuAppBar() {
           )}
         </Toolbar>
       </AppBar>
+      {}
     </div>
   );
 }

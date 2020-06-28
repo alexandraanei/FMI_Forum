@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Editor, { createEditorStateWithText } from "draft-js-plugins-editor";
+import Editor from "draft-js-plugins-editor";
 import axios from "axios";
 import { stateToHTML } from "draft-js-export-html";
 import createToolbarPlugin, { Separator } from "draft-js-static-toolbar-plugin";
@@ -35,9 +35,8 @@ import FileUpload from "@material-ui/icons/AddPhotoAlternate";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import { ContentState, EditorState, convertFromHTML } from "draft-js";
-import AlertStore from '../../Stores/AlertStore';
+import AlertStore from "../../Stores/AlertStore";
 
 class HeadlinesPicker extends Component {
   componentDidMount() {
@@ -87,19 +86,31 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default class EditPostDialog extends Component {
-  handleClose = () => {
-    this.props.onClose();
+  state = {
+    editorState: EditorState.createWithContent(
+      ContentState.createFromBlockArray(
+        convertFromHTML(this.props.thread.content).contentBlocks,
+        convertFromHTML(this.props.thread.content).entityMap
+      )
+    ),
+    uploadFiles: [],
+    hasDeadline: false,
+    deadline: "",
+    privatePost: false,
   };
 
-  state = {
-    editorState: EditorState.createWithContent(ContentState.createFromBlockArray(
-        convertFromHTML(this.props.thread.content).contentBlocks,
-        convertFromHTML(this.props.thread.content).entityMap,
-    )),
-    uploadFiles: [...this.props.thread.files, ...this.props.thread.photos],
-    hasDeadline: this.props.thread.deadline ? true : false,
-    deadline: this.props.thread.deadline,
-    privatePost: this.props.thread.private,
+  componentDidMount() {
+    const { files, photos, deadline } = this.props.thread;
+    this.setState({
+      uploadFiles: photos.concat(files),
+      hasDeadline: deadline?.length === 10 ? true : false,
+      deadline,
+      privatePost: this.props.thread.private,
+    });
+  }
+
+  handleClose = () => {
+    this.props.onClose();
   };
 
   onChange = (editorState) => {
@@ -111,19 +122,19 @@ export default class EditPostDialog extends Component {
   };
 
   onChangeHandler = (e) => {
-    this.setState({ uploadFiles: [...e.target.files] });
+    this.setState({ uploadFiles: e.target.files });
   };
 
   deleteFiles = () => {
-      this.setState({ uploadFiles: [] });
-  }
+    this.setState({ uploadFiles: [] });
+  };
 
   handleToggle = (type) => {
     if (type === "private") {
       this.setState((state) => ({ privatePost: !state.privatePost }));
     } else {
       this.setState((state) => ({
-        deadline: state.hasDeadline ? null : this.yyyymmdd(new Date()),
+        deadline: state.hasDeadline ? "" : this.yyyymmdd(new Date()),
         hasDeadline: !state.hasDeadline,
       }));
     }
@@ -152,24 +163,30 @@ export default class EditPostDialog extends Component {
     this.props.onClose();
 
     const data = new FormData();
-    if (uploadFiles) {
+    if (typeof uploadFiles[0] === "object") {
       for (let i = 0; i < uploadFiles.length; i++) {
         data.append("files", uploadFiles[i]);
       }
+    } else if (uploadFiles.length > 0) {
+      data.append("unchangedFiles", true);
+    } else {
+      data.append("unchangedFiles", false);
     }
     data.append("content", content);
     data.append("deadline", deadline);
     data.append("private", privatePost);
 
-
     try {
-      const response = await axios.put("/api/thread/editcontent/" + thread._id, data);
+      const response = await axios.put(
+        "/api/thread/editcontent/" + thread._id,
+        data
+      );
       AlertStore.showSnackbar({
         message: "Postarea va fi revizuita si republicata in scurt timp.",
         type: "info",
       });
 
-      // history.push("/forum/" + this.props.thread.forumId);
+      // this.props.history.push("/forum/" + this.props.thread.forumId);
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -177,8 +194,13 @@ export default class EditPostDialog extends Component {
 
   render() {
     const { open, thread } = this.props;
-    console.log(this.props.thread);
-    console.log(this.state);
+    const {
+      uploadFiles,
+      hasDeadline,
+      deadline,
+      privatePost,
+      editorState,
+    } = this.state;
 
     return (
       <div>
@@ -209,7 +231,7 @@ export default class EditPostDialog extends Component {
           <Container className={classes.container} fixed maxWidth="xl">
             <div className={classes.editor} onClick={this.focus}>
               <Editor
-                editorState={this.state.editorState}
+                editorState={editorState}
                 onChange={this.onChange}
                 plugins={plugins}
                 ref={(element) => {
@@ -237,7 +259,7 @@ export default class EditPostDialog extends Component {
                   control={
                     <Switch
                       color="primary"
-                      checked={this.state.privatePost}
+                      checked={privatePost}
                       onChange={() => this.handleToggle("private")}
                     />
                   }
@@ -247,7 +269,7 @@ export default class EditPostDialog extends Component {
                   control={
                     <Switch
                       color="primary"
-                      checked={this.state.hasDeadline}
+                      checked={hasDeadline}
                       onChange={() => this.handleToggle("deadline")}
                     />
                   }
@@ -256,12 +278,12 @@ export default class EditPostDialog extends Component {
                 <TextField
                   id="date"
                   style={{
-                    opacity: this.state.hasDeadline ? 1 : 0,
+                    opacity: hasDeadline ? 1 : 0,
                     marginTop: -10,
                   }}
                   label="Seteaza deadline"
                   type="date"
-                  defaultValue={thread.deadline}
+                  defaultValue={this.yyyymmdd(new Date()) || thread.deadline}
                   onChange={(e) => this.setState({ deadline: e.target.value })}
                   className={classes.textField}
                   InputLabelProps={{
@@ -291,26 +313,30 @@ export default class EditPostDialog extends Component {
                   </Button>
                 </label>
                 <span className={classes.filename}>
-                  {this.state.uploadFiles.length > 0
-                    ? this.state.uploadFiles.length === 1
-                      ? this.state.uploadFiles[0].name
-                      : `${this.state.uploadFiles.length} files`
+                  {uploadFiles.length > 0
+                    ? uploadFiles.length === 1
+                      ? uploadFiles[0].name
+                        ? uploadFiles[0].name
+                        : uploadFiles[0]?.slice(51)
+                      : `${uploadFiles.length} files`
                     : ""}
                 </span>
-                {this.state.uploadFiles.length > 0 && (<Tooltip title="Sterge fisierele">
-                  <IconButton
-                    variant="contained"
-                    color="inherit"
-                    size="small"
-                    // className={classes.button}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      this.deleteFiles();
-                    }}
-                  >
-                    <RemoveCircleIcon />
-                  </IconButton>
-                </Tooltip>)}
+                {uploadFiles.length > 0 && (
+                  <Tooltip title="Sterge fisierele">
+                    <IconButton
+                      variant="contained"
+                      color="inherit"
+                      size="small"
+                      // className={classes.button}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.deleteFiles();
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
               </div>
             </div>
           </Container>

@@ -7,7 +7,6 @@ import {
   ListItem,
   Button,
   Tooltip,
-  IconButton,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
@@ -21,7 +20,6 @@ export default function ThreadItem(props) {
 
   const handleDeleteThread = id => {
     axios.delete(`/api/thread/${id}`);
-    console.log(id);
     setThreads(id);
     AlertStore.showSnackbar({
       message: "Postarea a fost stearsa.",

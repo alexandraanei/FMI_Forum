@@ -20,7 +20,6 @@ export default function CalendarPage() {
     try {
       const response = await axios.get("/api/thread/deadlines/" + id);
       setThreadsWithDeadline(response.data);
-      console.log(response.data);
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -44,7 +43,6 @@ export default function CalendarPage() {
   function getListData(value) {
     let listData = [];
     const calendarDate = yyyymmdd(value._d);
-    console.log(threadsWithDeadline)
 
     threadsWithDeadline.forEach(thread => {
       if(thread.deadline === calendarDate)

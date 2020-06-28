@@ -24,6 +24,7 @@ app.use('/api/thread', require("./controllers/Thread"));
 app.use('/api/post', require("./controllers/Post"));
 app.use('/api/profile', require("./controllers/Profile"));
 app.use('/api/user', require("./controllers/User"));
+app.use('/api/notification', require("./controllers/Notification"));
 
 const PORT = 5005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

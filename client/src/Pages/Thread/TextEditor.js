@@ -90,7 +90,6 @@ export default class TextEditor extends Component {
       this.state.deadline,
       this.state.privatePost,
     );
-    console.log(this.state.deadline);
   };
 
   focus = () => {

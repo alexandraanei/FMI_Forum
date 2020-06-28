@@ -80,7 +80,6 @@ export default function ShowProfile() {
         
     const onChangeHandler = e => {
         setAvatar(e.target.files[0]);
-        console.log(e.target.files[0]);
     }
     
     return (

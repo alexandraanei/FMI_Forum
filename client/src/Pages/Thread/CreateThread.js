@@ -35,8 +35,6 @@ export default function CreateThread () {
     data.append("deadline", deadline);
     data.append("private", privatePost);
 
-    console.log(...data);
-
     try {
       const response = await axios.post("/api/thread/create", data);
       AlertStore.showSnackbar({

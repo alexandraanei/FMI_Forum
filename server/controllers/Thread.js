@@ -44,15 +44,6 @@ router.post("/create", upload.array("files", 10), async (req, res) => {
     }
   }
 
-  Forum.findById(req.params.forumId).then((forum) => {
-    forum.lastUpdated = Date.now();
-
-    forum
-      .save()
-      .then(() => res.json("Forum updated!"))
-      .catch((err) => res.status(400).json("Error: " + err));
-  });
-
   let newThread = Thread({
     title,
     files: filesArray,
@@ -118,16 +109,8 @@ router.get("/deadlines/:id", async (req, res) => {
 });
 
 router.put("/:id/edit", async (req, res) => {
-  // let forum = await Forum.findById(req.params.forumId);
-  // forum.lastUpdated = Date.now();
-  // forum.save()
-  //         .then(() => res.json('Forum updated!'))
-  //         .catch(err => res.status(400).json('Error: ' + err));
-  //     })
-
   Forum.findById(req.params.forumId).then((forum) => {
     forum.lastUpdated = Date.now();
-
     forum
       .save()
       .then(() => res.json("Forum updated!"))
@@ -147,13 +130,96 @@ router.put("/:id/edit", async (req, res) => {
 });
 
 router.put("/approve/:id", async (req, res) => {
+  let threadId, userId;
+
+  Forum.findById(req.params.forumId).then((forum) => {
+    forum.lastUpdated = Date.now();
+    forum
+      .save()
+      .then(() => res.json("Forum updated!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
+
   Thread.findById(req.params.id)
     .then((thread) => {
       thread.approved = true;
-
+      threadId = thread._id;
+      console.log(thread);
+      userId = thread.userId;
       thread
         .save()
         .then(() => res.json("Thread approved!"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+
+  console.log("th us", threadId, userId);
+  let newNotification = Notification({
+    content: "Postarea ta a fost aprobata.",
+    createdAt: Date.now(),
+    threadId,
+    read: false,
+  });
+
+  console.log(newNotification);
+
+  newNotification.save(function (err, notification) {
+    User.findById(userId)
+      .update({ $push: { notification: newNotification } }, done)
+
+      .exec(function (err, notification) {
+        res.send(notification);
+      });
+  });
+});
+
+router.put("/editcontent/:id", upload.array("files", 10), async (req, res) => {
+  const { content, deadline, private, unchangedFiles } = req.body;
+  const url = req.protocol + "://" + req.get("host");
+  var filesArray = [];
+  var photosArray = [];
+  console.log(req.files);
+  if (req.files) {
+    for (let i = 0; i < req.files.length; i++) {
+      if (
+        req.files[i].originalname.slice(-3) === "png" ||
+        req.files[i].originalname.slice(-3) === "jpg" ||
+        req.files[i].originalname.slice(-4) === "jpeg" ||
+        req.files[i].originalname.slice(-3) === "gif" ||
+        req.files[i].originalname.slice(-3) === "bmp"
+      ) {
+        photosArray.push(req.files[i] ? url + "/" + req.files[i].path : "");
+      } else {
+        filesArray.push(req.files[i] ? url + "/" + req.files[i].path : "");
+      }
+    }
+  }
+
+  Forum.findById(req.params.forumId).then((forum) => {
+    forum.lastUpdated = Date.now();
+    forum
+      .save()
+      .then(() => res.json("Forum updated!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
+
+  Thread.findById(req.params.id)
+    .then((thread) => {
+      thread.content = content;
+      if (deadline !== thread.deadline)
+        thread.hasDeadline = !thread.hasDeadline;
+      thread.deadline = deadline;
+      thread.content = content;
+      thread.private = private;
+      if (!unchangedFiles) {
+        thread.photos = photosArray;
+        thread.files = filesArray;
+      }
+      thread.approved = false;
+
+      thread
+        .save()
+        .then(() => res.json("Thread updated!"))
         .catch((err) => res.status(400).json("Error: " + err));
     })
     .catch((err) => res.status(400).json("Error: " + err));

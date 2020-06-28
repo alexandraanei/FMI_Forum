@@ -76,24 +76,28 @@ export default function ShowThread() {
   const { id } = useParams();
 
   useEffect(() => {
-    getThread();
+    getThread().then((response) => checkPrivate(response));
     getPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getThread = async () => {
     const response = await axios.get("/api/thread/" + id);
-    if (response?.data.private === "true" && !user) {
-      history.push("/restricted");
-    }
     setThread(response.data);
     setLike(user !== null ? response.data.likedBy.includes(user?._id) : false);
     setLikesLength(response.data.likedBy.length);
+    return response.data;
   };
 
   const getPosts = async () => {
     const response = await axios.get("/api/post/thread/" + id);
     setPosts(response.data);
+  };
+
+  const checkPrivate = (thread) => {
+    if (thread.private === true && !user) {
+      history.push("/restricted");
+    }
   };
 
   const handleReply = async (event) => {

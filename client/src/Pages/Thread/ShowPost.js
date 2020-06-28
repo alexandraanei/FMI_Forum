@@ -6,7 +6,6 @@ import {
   TextField,
   Button,
   FormHelperText,
-  Grid,
   Card,
   CardActions,
   CardHeader,
@@ -22,7 +21,8 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
-import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import CloseIcon from "@material-ui/icons/Close";
+import FileUpload from "@material-ui/icons/AddPhotoAlternate";
 import AuthContext from "../../Contexts/AuthContext";
 import AlertStore from "../../Stores/AlertStore";
 
@@ -58,7 +58,7 @@ export default function ShowPost(props) {
   const { user } = useContext(AuthContext);
   const { index, post, setPosts } = props;
   const [postContent, setPostContent] = useState("");
-  const [postPhoto, setPostPhoto] = useState("");
+  const [postPhoto, setPostPhoto] = useState(post?.photo);
   const [isEditing, setIsEditing] = useState(false);
   const [like, setLike] = useState(post?.likedBy.includes(user?._id));
   const [likesLength, setLikesLength] = useState(post?.likedBy.length);
@@ -98,12 +98,18 @@ export default function ShowPost(props) {
   const handleEditPost = async (id) => {
     setIsEditing(false);
     post.content = postContent === "" ? post.content : postContent;
+
+    const data = new FormData();
+    if (postPhoto) data.append("photo", postPhoto);
+    data.append("content", post.content);
+
     try {
-      await axios.put("/api/post/" + id + "/edit", { content: post.content });
+      await axios.put("/api/post/" + id + "/edit", data);
       AlertStore.showSnackbar({
         message: "Postarea a fost modificata cu succes.",
         type: "success",
       });
+      history.push(`/thread/${post.threadId}`);
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -111,6 +117,14 @@ export default function ShowPost(props) {
 
   const handleEditPostInput = (id) => {
     setIsEditing(true);
+  };
+
+  const onChangeHandler = (e) => {
+    setPostPhoto(e.target.files[0]);
+  };
+
+  const handleDeletePhoto = () => {
+    setPostPhoto("");
   };
 
   return (
@@ -141,9 +155,13 @@ export default function ShowPost(props) {
           }
           subheader={
             <React.Fragment>
-              <Typography variant="subtitle2" className={classes.pos} color="textSecondary">
-                {post.userId.type === 'admin' && 'Administrator'}
-                {post.userId.type === 'mod' && 'Moderator'}
+              <Typography
+                variant="subtitle2"
+                className={classes.pos}
+                color="textSecondary"
+              >
+                {post.userId.type === "admin" && "Administrator"}
+                {post.userId.type === "mod" && "Moderator"}
               </Typography>
               <Typography variant="caption">
                 {new Date(post.createdAt).toLocaleDateString("ro-RO", {
@@ -154,7 +172,7 @@ export default function ShowPost(props) {
             </React.Fragment>
           }
         />
-        {post.photo && (
+        {postPhoto && (
           <CardMedia
             component="img"
             src={post.photo}
@@ -166,6 +184,52 @@ export default function ShowPost(props) {
               paddingTop: 20,
             }}
           />
+        )}
+        {isEditing && (
+          <div style={{ marginTop: 5, marginLeft: 10 }}>
+            <FormHelperText id="component-helper-text">
+              Incarca fisiere...
+            </FormHelperText>
+            <input
+              multiple
+              onChange={onChangeHandler}
+              className={classes.input}
+              id="icon-button-file"
+              type="file"
+            />
+            <label htmlFor="icon-button-file">
+              <Button
+                variant="contained"
+                component="span"
+                className={classes.button}
+              >
+                <FileUpload />
+                &nbsp;Incarca
+              </Button>
+            </label>
+            <span className={classes.filename}>
+              {postPhoto
+                ? postPhoto.name
+                  ? postPhoto.name
+                  : postPhoto?.slice(51)
+                : ""}
+            </span>
+            {postPhoto && (
+              <Tooltip title="Sterge fotografia">
+                <IconButton
+                  variant="contained"
+                  color="inherit"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeletePhoto();
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </div>
         )}
         <CardContent classes={{ root: classes.replyContent }}>
           <Typography variant="body2" component="div">

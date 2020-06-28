@@ -40,7 +40,6 @@ export default function AdminPanel() {
   const getToBeApprovedThreads = async () => {
     try {
       const response = await axios.get("/api/thread/unapproved");
-      console.log(response);
       setToBeApprovedThreads(response.data);
     } catch (err) {
       console.log(err.response.data.message);

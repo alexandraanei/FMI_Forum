@@ -18,7 +18,9 @@ const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/jpeg" ||
     file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg"
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/gif" ||
+    file.mimetype === "image/bmp"
   ) {
     cb(null, true);
   } else {
@@ -30,7 +32,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5,
+    fileSize: 1024 * 1024 * 25,
   },
   fileFilter: fileFilter,
 });
@@ -46,6 +48,8 @@ router.post("/create", upload.single("photo"), async (req, res) => {
     userId,
   });
 
+  console.log(newPost);
+
   newPost.save(function (err, post) {
     Post.findOne(post)
       .populate("userId")
@@ -57,10 +61,7 @@ router.post("/create", upload.single("photo"), async (req, res) => {
 
 router.get("/thread/:id", async (req, res) => {
   const page = req.query.page;
-  const perPage = 10;
   const posts = await Post.find({ threadId: req.params.id })
-    .limit(perPage)
-    .skip(perPage * (page - 1))
     .populate("userId");
   res.send(posts);
 });
@@ -95,10 +96,14 @@ router.put("/unlike/:id", async (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err.response));
 });
 
-router.put("/:id/edit", async (req, res) => {
+router.put("/:id/edit", upload.single("photo"), async (req, res) => {
+  const url = req.protocol + "://" + req.get("host");
+  console.log(req.file)
   Post.findById(req.params.id)
     .then((post) => {
       post.content = req.body.content;
+      post.photo = req.file ? url + "/" + req.file.path : "";
+      console.log(post.photo);
 
       post
         .save()
