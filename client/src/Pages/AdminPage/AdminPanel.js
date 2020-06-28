@@ -61,7 +61,7 @@ export default function AdminPanel() {
     <div style={{ padding: "2rem" }}>
       <h1>Panou Admin</h1>
       <Divider style={{ margin: "2rem 0" }} />
-      {users?.length && (
+      {users?.length > 0 && (
         <React.Fragment>
           <h3>Lista de useri</h3>
           <List>
