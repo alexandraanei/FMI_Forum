@@ -130,22 +130,9 @@ router.put("/:id/edit", async (req, res) => {
 });
 
 router.put("/approve/:id", async (req, res) => {
-  let threadId, userId;
-
-  Forum.findById(req.params.forumId).then((forum) => {
-    forum.lastUpdated = Date.now();
-    forum
-      .save()
-      .then(() => res.json("Forum updated!"))
-      .catch((err) => res.status(400).json("Error: " + err));
-  });
-
   Thread.findById(req.params.id)
     .then((thread) => {
       thread.approved = true;
-      threadId = thread._id;
-      console.log(thread);
-      userId = thread.userId;
       thread
         .save()
         .then(() => res.json("Thread approved!"))
@@ -153,24 +140,6 @@ router.put("/approve/:id", async (req, res) => {
     })
     .catch((err) => res.status(400).json("Error: " + err));
 
-  console.log("th us", threadId, userId);
-  let newNotification = Notification({
-    content: "Postarea ta a fost aprobata.",
-    createdAt: Date.now(),
-    threadId,
-    read: false,
-  });
-
-  console.log(newNotification);
-
-  newNotification.save(function (err, notification) {
-    User.findById(userId)
-      .update({ $push: { notification: newNotification } }, done)
-
-      .exec(function (err, notification) {
-        res.send(notification);
-      });
-  });
 });
 
 router.put("/editcontent/:id", upload.array("files", 10), async (req, res) => {

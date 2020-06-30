@@ -14,7 +14,6 @@ import {
 } from "@material-ui/core";
 import AuthContext from "../../Contexts/AuthContext";
 import CreateIcon from "@material-ui/icons/Create";
-import { BlockMapBuilder } from "draft-js";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -63,7 +62,7 @@ export default function ShowProfile() {
 
   useEffect(() => {
     getProfile();
-  });
+  }, []);
 
   const getProfile = async () => {
     const response = await axios.get("/api/profile/" + id);

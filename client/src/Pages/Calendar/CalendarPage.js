@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import AuthContext from "../../Contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { List, Divider, Button } from "@material-ui/core";
 import { Calendar, Badge } from "antd";
 import classes from "./CalendarPage.module.scss";
 

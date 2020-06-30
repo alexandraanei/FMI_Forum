@@ -5,16 +5,38 @@ const Thread = require("../models/Thread");
 const User = require("../models/User");
 const Forum = require("../models/Forum");
 
-// router.post('/create', async (req, res) => {
-//    const { title } = req.body;
-//    const newCategory = Category({
-//        title,
-//        createdAt: Date.now()
-//    });
+// create notification for one user
+router.post("/create/:id", async (req, res) => {
+  const { content, threadId, forumId, categoryId } = req.body;
 
-//    await newCategory.save();
-//    res.send(newCategory);
-// });
+  let newNotification = Notification({
+    content,
+    createdAt: Date.now(),
+    threadId,
+    forumId,
+    categoryId,
+    read: false,
+  });
+
+  // User.find({
+  //   type: "user",
+  //   threads: { $exists: true, $not: { $size: 0 } },
+  //   forums: { $exists: true, $not: { $size: 0 } },
+  //   categories: { $exists: true, $not: { $size: 0 } },['threads', 'forums', 'categories', 'notifications'], function(err, docs) {}
+  // });
+
+  //  newNotification.save(function (err, notification) {
+  //   User.findById(req.params.id)
+  //     .update({ $push: { notifications: newNotification } }, done)
+
+  //     .exec(function (err, notification) {
+  //       res.send(notification);
+  //     });
+  // });
+
+  await newNotification.save();
+  res.send(newNotification);
+});
 
 router.get("/:id", async (req, res) => {
   const notifications = await Notification.find({
@@ -23,27 +45,10 @@ router.get("/:id", async (req, res) => {
   res.send(notifications);
 });
 
-// router.put('/:id/edit', async (req, res) => {
-//     Category.findById(req.params.id)
-//     .then(category => {
-//         category.title = req.body.name;
-
-//         category.save()
-//           .then(() => res.json('Category updated!'))
-//           .catch(err => res.status(400).json('Error: ' + err));
-//       })
-//       .catch(err => res.status(400).json('Error: ' + err));
-// });
-
-// router.delete('/:id', (req, res) => {
-//     Category.findByIdAndDelete(req.params.id)
-//     .then(() => res.json('Category deleted.'))
-//     .catch(err => res.status(400).json('Error: ' + err));
-// });
-
-// router.get('/', async (req, res) => {
-//     const cats = await Category.find({});
-//     res.send(cats);
-// });
+router.delete("/:id", (req, res) => {
+  Notification.findByIdAndDelete(req.params.id)
+    .then(() => res.json("Notification deleted."))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
 module.exports = router;

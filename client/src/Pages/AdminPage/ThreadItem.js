@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import AuthContext from "../../Contexts/AuthContext";
 import axios from "axios";
 import classNames from 'classnames';
 import {
@@ -17,6 +18,8 @@ export default function ThreadItem(props) {
   const { index, setThreads } = props;
   var { thread } = props;
   const history = useHistory();
+  const { user } = useContext(AuthContext);
+  const userId = user._id;
 
   const handleDeleteThread = id => {
     axios.delete(`/api/thread/${id}`);
@@ -29,8 +32,20 @@ export default function ThreadItem(props) {
   };
 
   const handleApproveThread = async id => {
+    console.log(thread.userId);
     try {
       await axios.put("/api/thread/approve/" + id);
+      setThreads(id);
+      AlertStore.showSnackbar({
+        message: "Postarea a fost aprobata.",
+        type: "success",
+      });
+      history.push("/admin");
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+    try {
+      await axios.post("/api/notification/create/" + thread.userId._id);
       setThreads(id);
       AlertStore.showSnackbar({
         message: "Postarea a fost aprobata.",
