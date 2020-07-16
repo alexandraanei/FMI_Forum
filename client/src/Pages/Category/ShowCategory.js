@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import classNames from "classnames";
 import AuthContext from "../../Contexts/AuthContext";
 import { useHistory, useParams } from "react-router-dom";
 import axios from "axios";
 import ForumItem from "./ForumItem";
-import { List, Button, Divider } from "@material-ui/core";
+import { List, Button } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AddIcon from "@material-ui/icons/Add";
 import classes from "./ShowCategory.module.scss";
@@ -16,7 +15,7 @@ export default function BrowseCategories() {
 
   const [category, setCategory] = useState(null);
   const [fora, setFora] = useState([]);
-  const [mounted, setMounted] = useState(false);
+  // const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     getCategory();
@@ -31,7 +30,7 @@ export default function BrowseCategories() {
   const getFora = async () => {
     const response = await axios.get("/api/forum/category/" + id);
     setFora(response.data);
-    setMounted(true);
+    // setMounted(true);
   };
 
   return (
@@ -52,7 +51,7 @@ export default function BrowseCategories() {
           startIcon={<AddIcon />}
           onClick={() => history.push("/forum/create/" + id)}
         >
-          Forum nou
+          Subforum nou
         </Button>
       )}
       <div className={classes.panel}>

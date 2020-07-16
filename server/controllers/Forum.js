@@ -16,7 +16,7 @@ router.post('/create', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-   const forum = await Forum.findById(req.params.id);
+   const forum = await Forum.findById(req.params.id).populate('pinnedPosts').populate({ path: "pinnedPosts", populate: "userId" });
    if (!forum) {
        res.status(404).send({
            message: 'Forum not found'

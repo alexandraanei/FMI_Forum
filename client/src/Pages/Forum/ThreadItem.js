@@ -19,7 +19,7 @@ import AlertStore from "../../Stores/AlertStore";
 
 export default function ThreadItem(props) {
   const { user } = useContext(AuthContext);
-  var { thread, pinned } = props;
+  var { thread, pinned, removeFixedThread, addFixedThread } = props;
   const history = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const [threadName, setThreadName] = useState("");
@@ -39,6 +39,7 @@ export default function ThreadItem(props) {
       await axios.put(`/api/forum/addtopinned/${thread.forumId}`, {
         thread: thread._id,
       });
+      addFixedThread(thread);
       AlertStore.showSnackbar({
         message: "Postarea a fost fixata.",
         type: "success",
@@ -54,6 +55,7 @@ export default function ThreadItem(props) {
       await axios.put(`/api/forum/removepinned/${thread.forumId}`, {
         thread: thread._id,
       });
+      removeFixedThread(thread);
       AlertStore.showSnackbar({
         message: "Postarea a fost stearsa dintre cele fixate.",
         type: "success",

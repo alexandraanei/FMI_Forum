@@ -14,38 +14,6 @@ export default function BrowseCategories() {
   const { user } = useContext(AuthContext);
   const history = useHistory();
 
-  // useEffect(() => {
-  //     let unmounted = false;
-  //     let source = axios.CancelToken.source();
-
-  //     const getCategories = (unmounted, source) => {
-  //         axios.get('/api/category',  {
-  //             cancelToken: source.token,
-  //         })
-  //             .then(response => {
-  //                 if (!unmounted) {
-  //                     // @ts-ignore
-  //                     setCategories(response.data);
-  //                 }
-  //             }).catch(function (e) {
-  //             if (!unmounted) {
-  //                 if (axios.isCancel(e)) {
-  //                     console.log(`request cancelled:${e.message}`);
-  //                 } else {
-  //                     console.log("another error happened:" + e.message);
-  //                 }
-  //             }
-  //         });
-  //     };
-
-  //     getCategories(unmounted, source);
-
-  //     return function () {
-  //         unmounted = true;
-  //         source.cancel("Cancelling in cleanup");
-  //     };
-  // }, []);
-
   useEffect(() => {
     getCategories();
   }, []);
@@ -66,7 +34,7 @@ export default function BrowseCategories() {
             startIcon={<AddIcon />}
             onClick={() => history.push("/category/create")}
           >
-            Subforum nou
+            Forum nou
           </Button>
           <Divider style={{ margin: "2rem 0" }} />
         </React.Fragment>

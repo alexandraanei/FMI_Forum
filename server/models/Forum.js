@@ -5,7 +5,7 @@ const ForumSchema = new Schema({
     title: String,
     createdAt: Date,
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
-    pinnedPosts: { type: [Schema.Types.ObjectId], ref: 'Thread' },
+    pinnedPosts: [{ type: Schema.Types.ObjectId, ref: 'Thread' }],
     lastUpdated: Date,
 });
 

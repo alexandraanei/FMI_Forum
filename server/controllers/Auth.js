@@ -8,7 +8,7 @@ router.get('/init', async (req, res) => {
     let response = null;
     try {
         const { userId } = jwt.verify(req.query.token, 'app');
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).populate('notifications');
         if (user) {
             response = user;
         }
@@ -17,14 +17,21 @@ router.get('/init', async (req, res) => {
         console.log(err);
       }
 
-    res.send({user: response});
+    res.send({ user: response });
 });
 
 router.post('/register', async (req, res) => {
-    const userExists = await User.findOne({ email: req.body.email });
-    if (userExists) {
+    const userEmailExists = await User.findOne({ email: req.body.email });
+    const userUsernameExists = await User.findOne({ username: req.body.username });
+    if (userEmailExists) {
         res.status(400).send({
             message: 'email_exists'
+        });
+        return;
+    }
+    if (userUsernameExists) {
+        res.status(400).send({
+            message: 'username_exists'
         });
         return;
     }
@@ -44,7 +51,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-   const user = await User.findOne({ email: req.body.email });
+   const user = await User.findOne({ email: req.body.email }).populate('notifications');
    if (!user) {
        res.status(404).send({
            message: 'user_not_found'
@@ -60,7 +67,7 @@ router.post('/login', async (req, res) => {
        return;
    }
 
-   const token = jwt.sign({userId: user._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2),}, 'app');
+   const token = jwt.sign({ userId: user._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, 'app');
    res.send({
        token,
        user

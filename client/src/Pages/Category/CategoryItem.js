@@ -30,7 +30,9 @@ export default function CategoryItem(props) {
   const history = useHistory();
   const root = useStyles();
   const [fora, setFora] = useState([]);
-  const [subscribed, setSubscribed] = useState(user?.subscribedCategories.includes(category._id));
+  const [subscribed, setSubscribed] = useState(
+    user?.subscribedCategories.includes(category._id)
+  );
 
   useEffect(() => {
     getFora();
@@ -81,9 +83,7 @@ export default function CategoryItem(props) {
   return (
     <ExpansionPanel
       defaultExpanded={
-        subscribed ||
-        user?.subscribedCategories.length === 0 ||
-        !user
+        subscribed || user?.subscribedCategories.length === 0 || !user
       }
       key={index}
       classes={root}
@@ -110,20 +110,12 @@ export default function CategoryItem(props) {
         <div style={{ flexGrow: 1 }} />
         {user?.type === "user" && (
           <Tooltip
-            title={
-              subscribed
-                ? "Dezaboneaza-te"
-                : "Aboneaza-te"
-            }
+            title={subscribed ? "Dezaboneaza-te" : "Aboneaza-te"}
             aria-label="subscribe"
           >
             <IconButton
               variant="contained"
-              color={
-                subscribed
-                  ? "primary"
-                  : "default"
-              }
+              color={subscribed ? "primary" : "default"}
               size="small"
               className={classes.button}
               onClick={(e) => {

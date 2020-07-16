@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import validator from "validator";
 import axios from "axios";
@@ -39,6 +39,7 @@ export default function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState(null);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(null);
   const [password, setPassword] = useState("");
@@ -49,6 +50,7 @@ export default function Register() {
     event.preventDefault();
     setEmailError(null);
     setPasswordError(null);
+    setUsernameError(null);
     let errors = 0;
 
     if (!validator.isEmail(email)) {
@@ -78,7 +80,10 @@ export default function Register() {
     } catch (e) {
       const message = e.response.data.message;
       if (message === "email_exists") {
-        setEmailError("Exista deja user inregistrat cu aceast e-mail.");
+        setEmailError("Exista deja user inregistrat cu acest e-mail.");
+      }
+      if (message === "username_exists") {
+        setUsernameError("Exista deja user inregistrat cu acest username.");
       }
     }
   };
@@ -115,6 +120,8 @@ export default function Register() {
             label="Username"
             autoFocus
             value={username}
+            error={!!usernameError}
+            helperText={usernameError}
             onChange={(e) => setUsername(e.target.value)}
           />
           <TextField

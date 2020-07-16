@@ -39,7 +39,7 @@ const CreateForum = () => {
       >
         Inapoi
       </Button>
-      <h1 style={{ marginBottom: "2rem" }}>Forum Nou</h1>
+      <h1 style={{ marginBottom: "2rem" }}>Subforum nou</h1>
 
       <form onSubmit={handleOnSubmit}>
         <TextField

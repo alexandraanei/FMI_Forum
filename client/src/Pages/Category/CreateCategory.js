@@ -38,7 +38,7 @@ const CreateCategory = () => {
       >
         Inapoi
       </Button>
-      <h1 style={{ marginBottom: "2rem" }}>Subforum nou</h1>
+      <h1 style={{ marginBottom: "2rem" }}>Forum nou</h1>
 
       <form onSubmit={handleOnSubmit}>
         <TextField

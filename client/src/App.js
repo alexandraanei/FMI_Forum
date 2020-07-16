@@ -67,10 +67,10 @@ function App() {
                     <Home />
                   </Route>
                   <Route path="/auth/login">
-                    {!user ? <Login /> : <Redirect to="/restricted" />}
+                    {!user ? <Login /> : <Redirect to="/" />}
                   </Route>
                   <Route path="/auth/register">
-                    {!user ? <Register /> : <Redirect to="/restricted" />}
+                    {!user ? <Register /> : <Redirect to="/" />}
                   </Route>
                   <Route path="/category/create">
                     {user ? <CreateCategory /> : <Redirect to="/auth/login" />}
@@ -103,11 +103,7 @@ function App() {
                     {user ? <SettingsPage /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/admin">
-                    {user?.type === "admin" ? (
-                      <AdminPanel />
-                    ) : (
-                      <Redirect to="/restricted" />
-                    )}
+                    {user?.type === "admin" ? <AdminPanel /> : <Redirect to="/restricted" />}
                   </Route>
                   <Route path="/calendar">
                     {user ? <CalendarPage /> : <Redirect to="/restricted" />}

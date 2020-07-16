@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import AuthContext from "../../Contexts/AuthContext";
-import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { Calendar, Badge } from "antd";
 import classes from "./CalendarPage.module.scss";
 
 export default function CalendarPage() {
-  const history = useHistory();
   const { user } = useContext(AuthContext);
   const id = user._id;
   const [threadsWithDeadline, setThreadsWithDeadline] = useState([]);
@@ -66,7 +64,6 @@ export default function CalendarPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Calendar</h1>
-
       <Calendar
         dateCellRender={dateCellRender}
       />

@@ -36,26 +36,14 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(4),
     height: theme.spacing(4),
   },
+  notification: {
+    color: 'rgb(154, 162, 206)',
+    textShadow: '0px 1px 1px #152475',
+    background: 'rgba(154, 162, 206, 0.2)',
+  }
 }));
 
-const options = [
-  'None',
-  'Atria',
-  'Callisto',
-  'Dione',
-  'Ganymede',
-  'Hangouts Call',
-  'Luna',
-  'Oberon',
-  'Phobos',
-  'Pyxis',
-  'Sedna',
-  'Titania',
-  'Triton',
-  'Umbriel',
-];
-
-export default function MenuAppBar() {
+export default function Navbar() {
   const history = useHistory();
   const { user, handleLogout } = useContext(AuthContext);
   const id = user && user._id;
@@ -64,19 +52,6 @@ export default function MenuAppBar() {
   const [anchorNot, setAnchorNot] = React.useState(null);
   const openMenu = Boolean(anchorEl);
   const openNotifications = Boolean(anchorNot);
-  const [notifications, setNotifications] = React.useState([]);
-
-  useEffect(() => {
-    getNotifications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
-  const getNotifications = async () => {
-    const response = await axios.get("/api/notification/" + id);
-    setNotifications(response.data);
-    console.log(response.data);
-  };
 
   const logout = () => {
     handleClose();
@@ -92,8 +67,19 @@ export default function MenuAppBar() {
     setAnchorNot(event.currentTarget);
   };
 
-  const handleCloseNot = () => {
+  const handleCloseNot = (notificationId) => {
     setAnchorNot(null);
+    handleReadNotification(notificationId)
+  };
+
+  const handleReadNotification = async notification => {
+    try {
+      await axios.put(`/api/notification/read/${notification._id}`);
+      if (notification.threadId) history.push(`/thread/${notification.threadId}`);
+      if (notification.forumId) history.push(`/forum/${notification.forumId}`);
+    } catch (err) {
+      console.log(err.response);
+    }
   };
 
   const handleClose = () => {
@@ -147,7 +133,7 @@ export default function MenuAppBar() {
                 <EventIcon />
               </IconButton>
               <IconButton onClick={handleNotMenu} color="inherit">
-                <Badge badgeContent={0} color="secondary">
+                <Badge badgeContent={user.notifications.filter(notification => !notification.read).length} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
@@ -156,27 +142,27 @@ export default function MenuAppBar() {
                 anchorEl={anchorNot}
                 anchorOrigin={{
                   vertical: "top",
-                  horizontal: "right",
+                  horizontal: "center",
                 }}
                 transformOrigin={{
                   vertical: "top",
-                  horizontal: "right",
+                  horizontal: "center",
                 }}
                 open={openNotifications}
                 onClose={handleCloseNot}
                 PaperProps={{
                   style: {
-                    maxHeight: 45 * 4.5,
-                    width: "20ch",
+                    maxHeight: 45 * 4.5
                   },
                 }}
               >
-                {notifications.map((option) => (
-                  <MenuItem
-                    key={notifications._id}
-                    onClick={handleClose}
+                {user.notifications.map((notification) => (
+                  <MenuItem 
+                    key={notification?._id} 
+                    classes={{ root: !notification.read && classes.notification }} 
+                    onClick={() => handleCloseNot(notification)}
                   >
-                    {notifications.content}
+                    {notification.content}
                   </MenuItem>
                 ))}
               </Menu>
@@ -240,7 +226,6 @@ export default function MenuAppBar() {
           )}
         </Toolbar>
       </AppBar>
-      {}
     </div>
   );
 }

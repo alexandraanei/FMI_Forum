@@ -87,14 +87,14 @@ export default function AdminPanel() {
         </React.Fragment>
       )}
       <Divider style={{ margin: "2rem 0" }} />
-      <h3>Lista de subforumuri</h3>
+      <h3>Lista de forumuri</h3>
       <Button
         variant="contained"
         color="primary"
         startIcon={<AddIcon />}
         onClick={() => history.push("/category/create")}
       >
-        Creeaza subforum
+        Creeaza forum
       </Button>
       <List>
         {categories.map((category, index) => (

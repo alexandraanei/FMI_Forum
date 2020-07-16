@@ -5,8 +5,8 @@ const Thread = require("../models/Thread");
 const User = require("../models/User");
 const Forum = require("../models/Forum");
 
-// create notification for one user
-router.post("/create/:id", async (req, res) => {
+// create notification
+router.post("/create", async (req, res) => {
   const { content, threadId, forumId, categoryId } = req.body;
 
   let newNotification = Notification({
@@ -18,31 +18,37 @@ router.post("/create/:id", async (req, res) => {
     read: false,
   });
 
-  // User.find({
-  //   type: "user",
-  //   threads: { $exists: true, $not: { $size: 0 } },
-  //   forums: { $exists: true, $not: { $size: 0 } },
-  //   categories: { $exists: true, $not: { $size: 0 } },['threads', 'forums', 'categories', 'notifications'], function(err, docs) {}
-  // });
-
-  //  newNotification.save(function (err, notification) {
-  //   User.findById(req.params.id)
-  //     .update({ $push: { notifications: newNotification } }, done)
-
-  //     .exec(function (err, notification) {
-  //       res.send(notification);
-  //     });
-  // });
-
   await newNotification.save();
   res.send(newNotification);
 });
 
+router.put("/addtouser/:id", async (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      user.notifications.push(req.body.notificationId);
+      user
+        .save()
+        .then(() => res.json("user updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
+});
+
+router.put("/read/:id", async (req, res) => {
+  Notification.findById(req.params.id)
+    .then((notification) => {
+      notification.read = true;
+      notification
+        .save()
+        .then(() => res.json("notification updated!"))
+        .catch((err) => res.status(400).json("Error: " + err.response));
+    })
+    .catch((err) => res.status(400).json("Error: " + err.response));
+});
+
 router.get("/:id", async (req, res) => {
-  const notifications = await Notification.find({
-    userId: req.params.id,
-  }).populate("userId");
-  res.send(notifications);
+  const notification = await Notification.findById(req.params.id);
+  res.send(notification);
 });
 
 router.delete("/:id", (req, res) => {

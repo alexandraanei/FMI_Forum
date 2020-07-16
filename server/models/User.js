@@ -14,7 +14,7 @@ const UserSchema = new Schema({
     subscribedCategories: { type: [Schema.Types.ObjectId], ref: 'Category',  required: false },
     subscribedForums: { type: [Schema.Types.ObjectId], ref: 'Forum',  required: false },
     subscribedThreads: { type: [Schema.Types.ObjectId], ref: 'Thread',  required: false },
-    notifications: { type: [Schema.Types.ObjectId], ref: 'Notification' },
+    notifications: [{ type: Schema.Types.ObjectId, ref: 'Notification' }],
 });
 
 UserSchema.pre('save', async function(next) {

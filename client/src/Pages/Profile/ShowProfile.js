@@ -57,7 +57,6 @@ export default function ShowProfile() {
   const history = useHistory();
   const { user } = useContext(AuthContext);
   const { id } = useParams();
-
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -67,7 +66,6 @@ export default function ShowProfile() {
   const getProfile = async () => {
     const response = await axios.get("/api/profile/" + id);
     setProfile(response.data);
-    //todo: fix multiple requests
   };
 
   const handleEditProfile = () => {

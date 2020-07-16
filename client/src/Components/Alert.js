@@ -25,17 +25,9 @@ const styles = {
 class Alert extends React.Component {
   render() {
     const { classes } = this.props;
-    const {
-      vertical,
-      horizontal,
-      isVisible,
-      message,
-      type,
-      duration,
-    } = AlertStore;
+    const { vertical, horizontal, isVisible, message, type, duration } = AlertStore;
 
     const contentProps = {
-      'aria-describedby': 'message-id',
       classes: {
         root: classes[type]
       }

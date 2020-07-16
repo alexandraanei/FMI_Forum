@@ -2,13 +2,8 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../../Contexts/AuthContext";
 import axios from "axios";
-import classNames from 'classnames';
-import {
-  ListItemText,
-  ListItem,
-  Button,
-  Tooltip,
-} from "@material-ui/core";
+import classNames from "classnames";
+import { ListItemText, ListItem, Button, Tooltip } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import classes from "./AdminPanel.module.scss";
@@ -21,7 +16,7 @@ export default function ThreadItem(props) {
   const { user } = useContext(AuthContext);
   const userId = user._id;
 
-  const handleDeleteThread = id => {
+  const handleDeleteThread = (id) => {
     axios.delete(`/api/thread/${id}`);
     setThreads(id);
     AlertStore.showSnackbar({
@@ -31,7 +26,7 @@ export default function ThreadItem(props) {
     history.push("/admin");
   };
 
-  const handleApproveThread = async id => {
+  const handleApproveThread = async (id) => {
     console.log(thread.userId);
     try {
       await axios.put("/api/thread/approve/" + id);
@@ -45,7 +40,14 @@ export default function ThreadItem(props) {
       console.log(err.response.data.message);
     }
     try {
-      await axios.post("/api/notification/create/" + thread.userId._id);
+      const data = {
+        threadId: thread._id,
+        content: "Postarea ta a fost aprobata de catre administrator.",
+      };
+      const notification = await axios.post("/api/notification/create/", data);
+      await axios.put("/api/notification/addtouser/" + thread.userId._id, {
+        notificationId: notification.data._id,
+      });
       setThreads(id);
       AlertStore.showSnackbar({
         message: "Postarea a fost aprobata.",
@@ -79,7 +81,7 @@ export default function ThreadItem(props) {
           color="primary"
           size="small"
           className={classNames(classes.button, classes.approveButton)}
-          style={{ marginRight: 5, background: '#76e676' }}
+          style={{ marginRight: 5, background: "#76e676" }}
           onClick={(e) => {
             e.stopPropagation();
             handleApproveThread(thread._id);

@@ -24,7 +24,6 @@ import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AuthContext from "../../Contexts/AuthContext";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-// import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import CheckIcon from "@material-ui/icons/Check";
 import ShowPost from "./ShowPost";
 import { Carousel } from "antd";
@@ -63,8 +62,6 @@ export default function ShowThread() {
   const { user } = useContext(AuthContext);
   const [thread, setThread] = useState(null);
   const [posts, setPosts] = useState([]);
-  // const [page, setPage] = useState(1);
-  // const [hasMore, setHasMore] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [replyPhoto, setReplyPhoto] = useState("");
@@ -334,7 +331,8 @@ export default function ShowThread() {
                   <CardContent style={{ marginBottom: -20 }}>
                     <div dangerouslySetInnerHTML={{ __html: thread.content }} />
                   </CardContent>
-                  {thread.deadline && (
+                  {console.log(thread?.deadline)}
+                  {(thread?.deadline !== undefined && thread?.deadline !== 'null' ) && (
                     <CardContent>Deadline: {thread.deadline}</CardContent>
                   )}
                   {thread.photos.length > 0 && (
@@ -393,7 +391,7 @@ export default function ShowThread() {
                           }apreciaza aceasta postare`}
                       </div>
                       <div style={{ flexGrow: 1 }} />
-                      {(user?.type === "admin" ||
+                      {(user?.type === "admin" || user?.type === "mod" ||
                         user._id === thread.userId._id) && (
                         <Tooltip title="Editeaza postarea">
                           <IconButton
@@ -426,27 +424,6 @@ export default function ShowThread() {
                 setPosts={handleSetPosts}
               />
             ))}
-            {/* <Button
-              variant="contained"
-              color="primary"
-              disabled={page <= 2}
-              style={{ marginRight: 5 }}
-              startIcon={<ArrowBackIcon />}
-              onClick={() => getPosts(page - 2)}
-            >
-              Pagina anterioara
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!hasMore}
-              style={{ marginRight: 5 }}
-              endIcon={<ArrowForwardIcon />}
-              onClick={() => getPosts(page)}
-            >
-              Pagina urmatoare
-            </Button> */}
-
             {user && (
               <Button
                 variant="contained"
